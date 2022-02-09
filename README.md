@@ -1,5 +1,6 @@
 # Kubernetes Operator Basics
 
+![](docs/contents.drawio.svg)
 ## Contents
 
 1. [Introduction](01-introductioin)
