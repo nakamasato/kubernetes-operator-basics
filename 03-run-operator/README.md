@@ -2,93 +2,137 @@
 
 ## Overview
 
-We'll run [Prometheus](https://prometheus.io/) with and without [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator).
+We'll run **PostgreSQL** with and without [postgres-operator](https://github.com/zalando/postgres-operator)
 
-The Prometheus Operator serves to make running Prometheus on top of Kubernetes as easy as possible, while preserving Kubernetes-native configuration options.
+## 1. Run PostgreSQL without operator.
 
-## 1. Run Prometheus without operator
+1. Create Yaml file.
+1. Apply
 
-> Prometheus can reload its configuration at runtime. If the new configuration is not well-formed, the changes will not be applied. A configuration reload is triggered by sending a SIGHUP to the Prometheus process or sending a HTTP POST request to the /-/reload endpoint (when the --web.enable-lifecycle flag is enabled). This will also reload any configured rule files.
-
-## 2. Run Prometheus with operator
-
-1. Install operator ([bundle.yaml](https://github.com/prometheus-operator/prometheus-operator/blob/main/bundle.yaml))
     ```
-    kubectl create -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
+    kubectl delete -f postgres-sts.yaml
     ```
 
-    <details><summary>Resources in bundle.yaml</summary>
+## 2. Run PostgreSQL with operator.
 
-    1. Custom Resource Definitions:
-        1. `AlertmanagerConfig`
-        1. `Alertmanager`
-        1. `PodMonitor`
-        1. `Probe`
-        1. `Prometheus`
-        1. `PrometheusRule`
-        1. `ServiceMonitor`
-        1. `ThanosRuler`
-    1. `ClusterRoleBinding`: `prometheus-operator`
-    1. `ClusterRole`: `prometheus-operator`
-    1. `Deployment`: `prometheus-operator`
-    1. `ServiceAccount`: `prometheus-operator`
-    1. `Service`: `prometheus-operator`
+
+1. Install Postgres Operator
+
+    ```
+    kubectl apply -k github.com/zalando/postgres-operator/manifests
+    ```
+1. Deploy the Operator UI
+
+    ```
+    kubectl apply -k github.com/zalando/postgres-operator/ui/manifests
+    ```
+
+    Check:
+
+    ```
+    kubectl port-forward svc/postgres-operator-ui 8081:80
+    ```
+
+    Open http://localhost:8081/
+
+1. Create a Postgres Cluster
+
+
+    ```
+    kubectl create -f https://raw.githubusercontent.com/zalando/postgres-operator/master/manifests/minimal-postgres-manifest.yaml
+    ```
+
+    <details><summary>Roles and Databases initially created:</summary>
+
+    yaml:
+
+    ```yaml
+      users:
+        zalando:  # database owner
+        - superuser
+        - createdb
+        foo_user: []  # role for application foo
+      databases:
+        foo: zalando  # dbname: owner
+      preparedDatabases:
+        bar: {}
+    ```
+
+    roles:
+
+    ```
+    \du
+                                                         List of roles
+        Role name    |                         Attributes                         |               Member of
+    -----------------+------------------------------------------------------------+----------------------------------------
+     admin           | Create DB, Cannot login                                    | {foo_user,zalando,bar_owner}
+     bar_data_owner  | Cannot login                                               | {bar_data_writer,bar_data_reader}
+     bar_data_reader | Cannot login                                               | {}
+     bar_data_writer | Cannot login                                               | {bar_data_reader}
+     bar_owner       | Cannot login                                               | {bar_writer,bar_data_owner,bar_reader}
+     bar_reader      | Cannot login                                               | {}
+     bar_writer      | Cannot login                                               | {bar_reader}
+     foo_user        |                                                            | {}
+     postgres        | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+     robot_zmon      | Cannot login                                               | {}
+     standby         | Replication                                                | {}
+     zalando         | Superuser, Create DB                                       | {}
+     zalandos        | Cannot login                                               | {}
+    ```
+
+    databases:
+
+    ```
+    \l
+                                      List of databases
+       Name    |   Owner   | Encoding |   Collate   |    Ctype    |   Access privileges
+    -----------+-----------+----------+-------------+-------------+-----------------------
+     bar       | bar_owner | UTF8     | en_US.utf-8 | en_US.utf-8 |
+     foo       | zalando   | UTF8     | en_US.utf-8 | en_US.utf-8 |
+     postgres  | postgres  | UTF8     | en_US.utf-8 | en_US.utf-8 |
+     template0 | postgres  | UTF8     | en_US.utf-8 | en_US.utf-8 | =c/postgres          +
+               |           |          |             |             | postgres=CTc/postgres
+     template1 | postgres  | UTF8     | en_US.utf-8 | en_US.utf-8 | =c/postgres          +
+               |           |          |             |             | postgres=CTc/postgres
+    (5 rows)
+    ```
 
     </details>
 
-## 2. Run Grafana with operator
+1. Check
 
-### 1. Install operator
+    ```
+    # check the deployed cluster
+    kubectl get postgresql
 
-```
-kubectl apply -k github.com/grafana-operator/grafana-operator/deploy/manifests/
-```
+    # check created database pods
+    kubectl get pods -l application=spilo -L spilo-role
 
-### 2. Create Grafana
+    # check created service resources
+    kubectl get svc -l application=spilo -L spilo-role
+    ```
 
-Be sure to deploy in the same namespace as the operator.
+1. Connect to Postgres cluster.
 
-```
-kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-operator/master/deploy/examples/Grafana.yaml -n grafana-operator-system
-```
+    ```
+    kubectl exec -it acid-minimal-cluster-0 -- psql -Upostgres
+    psql (14.0 (Ubuntu 14.0-1.pgdg18.04+1))
+    Type "help" for help.
 
-Check status
-```
-kubectl get grafana example-grafana -n grafana-operator-system -o jsonpath='{.status}'
-{"message":"success","phase":"reconciling","previousServiceName":"grafana-service"}
-```
+    postgres=#
+    ```
 
-port forward
+1. Check on UI.
 
-```
-kubectl port-forward -n grafana-operator-system svc/grafana-service 3000
-```
+    http://localhost:8081/#/status/default/acid-minimal-cluster
 
-### 3. Dashboard
+1. Clean up.
 
-simple-dashboard (with raw json in `spec.json`)
+    ```
+    kubectl delete -f https://raw.githubusercontent.com/zalando/postgres-operator/master/manifests/minimal-postgres-manifest.yaml
+    kubectl delete -k github.com/zalando/postgres-operator/ui/manifests
+    kubectl delete -k github.com/zalando/postgres-operator/manifests
+    ```
 
-```
-kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-operator/master/deploy/examples/dashboards/SimpleDashboard.yaml -n grafana-operator-system
-```
-
-grafana-dashboard-from-grafana (with `spec.grafanaCom.id` and `spec.grafanaCom.revision`)
-
-```
-kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-operator/master/deploy/examples/dashboards/DashboardFromGrafana.yaml -n grafana-operator-system
-```
-
-keycloak-dashboard
-
-```
-kubectl apply -f https://raw.githubusercontent.com/grafana-operator/grafana-operator/master/deploy/examples/dashboards/KeycloakDashboard.yaml -n grafana-operator-system
-```
-
-## More operators
-
-- https://github.com/argoproj/argo-cd
-- https://github.com/strimzi/strimzi-kafka-operator
-- https://github.com/mysql/mysql-operator
-- https://github.com/zalando/postgres-operator
-- https://github.com/aws-controllers-k8s/community
-- https://github.com/grafana-operator/grafana-operator
+## Other Postgres Operator
+- https://www.kubegres.io/
