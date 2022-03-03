@@ -1,19 +1,68 @@
-# Run Operator
+# Run Operator - Example: postgres-operator
 
 ## Overview
 
-We'll run **PostgreSQL** with and without [postgres-operator](https://github.com/zalando/postgres-operator)
+We'll run **PostgreSQL** with and without [postgres-operator](https://github.com/zalando/postgres-operator) and
+see how easy it is to create a new user with operator.
 
-## 1. Run PostgreSQL without operator.
+## 1. Without operator.
 
-1. Create Yaml file.
-1. Apply
+1. Create postgres with simple `StatefulSet`.
+
+    For simplicity, we just set replica is 1. (Just increasing replica cannot form a postgres cluster.)
+
+    ```
+    kubectl apply -f postgres-sts.yaml
+    ```
+
+1. Check deployed `Pod`.
+
+    ```
+    kubectl get po postgres-0
+    NAME         READY   STATUS    RESTARTS   AGE
+    postgres-0   1/1     Running   0          17s
+    ```
+
+1. Create a new user.
+
+    ```
+    kubectl exec -it postgres-0 -- psql postgres postgres
+    psql (14.2 (Debian 14.2-1.pgdg110+1))
+    Type "help" for help.
+
+    postgres=#
+    ```
+
+    ```
+    postgres=# create user test_user with encrypted password 'password';
+    CREATE ROLE
+    postgres=# create database test_db owner test_user;
+    CREATE DATABASE
+    postgres=# \du
+                                       List of roles
+     Role name |                         Attributes                         | Member of
+    -----------+------------------------------------------------------------+-----------
+     postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+     test_user |                                                            | {}
+    postgres=# \list
+                                     List of databases
+       Name    |   Owner   | Encoding |  Collate   |   Ctype    |   Access privileges
+    -----------+-----------+----------+------------+------------+-----------------------
+     postgres  | postgres  | UTF8     | en_US.utf8 | en_US.utf8 |
+     template0 | postgres  | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+               |           |          |            |            | postgres=CTc/postgres
+     template1 | postgres  | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+               |           |          |            |            | postgres=CTc/postgres
+     test_db   | test_user | UTF8     | en_US.utf8 | en_US.utf8 |
+    (4 rows)
+    ```
+
+1. Clean up.
 
     ```
     kubectl delete -f postgres-sts.yaml
     ```
-
-## 2. Run PostgreSQL with operator.
+## 2. With operator.
 
 
 1. Install Postgres Operator
@@ -35,14 +84,23 @@ We'll run **PostgreSQL** with and without [postgres-operator](https://github.com
 
     Open http://localhost:8081/
 
-1. Create a Postgres Cluster
+1. Create a Postgres cluster on UI.
 
+    Create:
+
+    ![](postgres-operator-cluster-creation.png)
+
+    Creation completed:
+
+    ![](postgres-operator-cluster-creation-complete.png)
+
+    <details><summary>you can also create postgres cluster with yaml</summary>
 
     ```
     kubectl create -f https://raw.githubusercontent.com/zalando/postgres-operator/master/manifests/minimal-postgres-manifest.yaml
     ```
 
-    <details><summary>Roles and Databases initially created:</summary>
+    **Roles and Databases initially created:**
 
     yaml:
 
@@ -112,19 +170,58 @@ We'll run **PostgreSQL** with and without [postgres-operator](https://github.com
     kubectl get svc -l application=spilo -L spilo-role
     ```
 
-1. Connect to Postgres cluster.
+1. Connect to PostgreSQL cluster.
 
     ```
-    kubectl exec -it acid-minimal-cluster-0 -- psql -Upostgres
+    kubectl exec -it acid-test-cluster-0 -- psql -Upostgres
     psql (14.0 (Ubuntu 14.0-1.pgdg18.04+1))
     Type "help" for help.
 
     postgres=#
     ```
 
-1. Check on UI.
+1. Check `Secret` is automatically created for PostgreSQL users.
 
-    http://localhost:8081/#/status/default/acid-minimal-cluster
+    ```
+    kubectl get secret | grep postgresql
+    postgres.acid-test-cluster.credentials.postgresql.acid.zalan.do    Opaque                                2      60s
+    standby.acid-test-cluster.credentials.postgresql.acid.zalan.do     Opaque                                2      60s
+    test-user.acid-test-cluster.credentials.postgresql.acid.zalan.do   Opaque                                2      60s
+    ```
+
+1. Create a new user `test_user2` on UI.
+
+    ![](postgres-operator-user-creation.png)
+
+1. Check on PostgreSQL.
+
+    ```
+    kubectl exec -it acid-test-cluster-0 -- psql -Upostgres
+    psql (14.0 (Ubuntu 14.0-1.pgdg18.04+1))
+    Type "help" for help.
+
+    postgres=# \du
+                                              List of roles
+     Role name  |                         Attributes                         |       Member of
+    ------------+------------------------------------------------------------+------------------------
+     admin      | Create DB, Cannot login                                    | {test_user,test_user2}
+     postgres   | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+     robot_zmon | Cannot login                                               | {}
+     standby    | Replication                                                | {}
+     test_user  |                                                            | {}
+     test_user2 |                                                            | {}
+     zalandos   | Create DB, Cannot login                                    | {}
+    ```
+
+1. Check `Secret` again.
+
+    ```
+    kubectl get secret | grep postgresql
+    postgres.acid-test-cluster.credentials.postgresql.acid.zalan.do     Opaque                                2      2m18s
+    standby.acid-test-cluster.credentials.postgresql.acid.zalan.do      Opaque                                2      2m18s
+    test-user.acid-test-cluster.credentials.postgresql.acid.zalan.do    Opaque                                2      2m18s
+    test-user2.acid-test-cluster.credentials.postgresql.acid.zalan.do   Opaque                                2      6s
+    ```
 
 1. Clean up.
 
