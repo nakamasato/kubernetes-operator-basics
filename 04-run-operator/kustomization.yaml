@@ -1,4 +1,0 @@
-bases:
-  - github.com/zalando/postgres-operator/manifests
-patches:
-  - postgres-operator-with-crd.yaml
