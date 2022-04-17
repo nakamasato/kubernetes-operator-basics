@@ -17,12 +17,13 @@ see how easy it is to create a new user with operator.
         ```
         kubectl apply -k github.com/zalando/postgres-operator/manifests
         ```
-    1. **CRD-based** (`github.com/zalando/postgres-operator/manifests` + patch for `POSTGRES_OPERATOR_CONFIGURATION_OBJECT`):
-        ```
-        kubectl create -f manifests/operatorconfiguration.crd.yaml # registers the CRD
-        kubectl create -f manifests/postgresql-operator-default-configuration.yaml
+    1. **CRD-based**:
 
-        kubectl create -f manifests/operator-service-account-rbac.yaml
+        ```
+        kubectl create -f https://raw.githubusercontent.com/zalando/postgres-operator/master/manifests/operatorconfiguration.crd.yaml # registers the CRD
+        kubectl create -f https://raw.githubusercontent.com/zalando/postgres-operator/master/manifests/postgresql-operator-default-configuration.yaml
+
+        kubectl create -f https://raw.githubusercontent.com/zalando/postgres-operator/master/manifests/operator-service-account-rbac.yaml
         kubectl create -f postgres-operator-with-crd.yaml
         ```
 
@@ -205,10 +206,26 @@ see how easy it is to create a new user with operator.
 
 1. Clean up.
 
+    Custom Resource:
+
     ```
     kubectl delete -f https://raw.githubusercontent.com/zalando/postgres-operator/master/manifests/minimal-postgres-manifest.yaml
     kubectl delete -k github.com/zalando/postgres-operator/ui/manifests
+    ```
+
+    operator (configmap-based):
+
+    ```
     kubectl delete -k github.com/zalando/postgres-operator/manifests
+    ```
+
+    operator (crd-based):
+    ```
+    kubectl delete -f https://raw.githubusercontent.com/zalando/postgres-operator/master/manifests/postgresql-operator-default-configuration.yaml
+    kubectl delete -f https://raw.githubusercontent.com/zalando/postgres-operator/master/manifests/operatorconfiguration.crd.yaml
+
+    kubectl delete -f https://raw.githubusercontent.com/zalando/postgres-operator/master/manifests/operator-service-account-rbac.yaml
+    kubectl delete -f postgres-operator-with-crd.yaml
     ```
 
 ## 2. Run PostgreSQL without operator.
