@@ -5,14 +5,22 @@
 We'll run **PostgreSQL** with and without [postgres-operator](https://github.com/zalando/postgres-operator) and
 see how easy it is to create a new user with operator.
 
-## 2. Run PostgreSQL With operator.
+## 1. Run PostgreSQL With operator.
 
 
 1. Install Postgres Operator
 
-    ```
-    kubectl apply -k github.com/zalando/postgres-operator/manifests
-    ```
+    There are two options:
+
+    1. **ConfigMaps-based** (legacy):
+
+        ```
+        kubectl apply -k github.com/zalando/postgres-operator/manifests
+        ```
+    1. **CRD-based** (`github.com/zalando/postgres-operator/manifests` + patch for `POSTGRES_OPERATOR_CONFIGURATION_OBJECT`):
+        ```
+        kubectl apply -k .
+        ```
 
     For more details:
     1. [Quickstart](https://github.com/zalando/postgres-operator/blob/master/docs/quickstart.md#deployment-options)
@@ -24,6 +32,7 @@ see how easy it is to create a new user with operator.
     kubectl api-resources | grep zalan
     postgresqls                       pg           acid.zalan.do/v1                       true         postgresql
     ```
+
 1. Check `CRD`:
     1. list
         ```
