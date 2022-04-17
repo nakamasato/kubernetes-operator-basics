@@ -19,7 +19,11 @@ see how easy it is to create a new user with operator.
         ```
     1. **CRD-based** (`github.com/zalando/postgres-operator/manifests` + patch for `POSTGRES_OPERATOR_CONFIGURATION_OBJECT`):
         ```
-        kubectl apply -k .
+        kubectl create -f manifests/operatorconfiguration.crd.yaml # registers the CRD
+        kubectl create -f manifests/postgresql-operator-default-configuration.yaml
+
+        kubectl create -f manifests/operator-service-account-rbac.yaml
+        kubectl create -f postgres-operator-with-crd.yaml
         ```
 
     For more details:
