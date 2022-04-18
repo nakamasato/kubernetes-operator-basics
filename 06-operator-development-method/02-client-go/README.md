@@ -1,4 +1,4 @@
-# client go
+# Client Go
 
 1. Install go from https://go.dev/doc/install.
 1. Init go module (ref: https://go.dev/ref/mod#go-mod-init)

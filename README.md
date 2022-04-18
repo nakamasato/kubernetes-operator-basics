@@ -3,7 +3,7 @@
 ![](docs/contents.drawio.svg)
 ## Contents
 
-1. [Introduction](01-introductioin)
+1. [Introduction](01-introduction)
 1. [Operator Basics](02-operator-basics)
 1. [Environment Setup](03-environment-setup)
 1. [Run Operator](04-run-operator)
