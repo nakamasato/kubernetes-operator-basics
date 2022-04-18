@@ -206,10 +206,16 @@ see how easy it is to create a new user with operator.
 
 1. Clean up.
 
-    Custom Resource:
+    postgresql (cluster):
+
+    ```bash
+    kubectl delete postgresql acid-test-cluster
+    # kubectl delete -f https://raw.githubusercontent.com/zalando/postgres-operator/master/manifests/minimal-postgres-manifest.yaml
+    ```
+
+    UI:
 
     ```
-    kubectl delete -f https://raw.githubusercontent.com/zalando/postgres-operator/master/manifests/minimal-postgres-manifest.yaml
     kubectl delete -k github.com/zalando/postgres-operator/ui/manifests
     ```
 
