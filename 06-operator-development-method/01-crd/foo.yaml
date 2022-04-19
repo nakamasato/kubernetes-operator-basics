@@ -2,6 +2,6 @@ apiVersion: example.com/v1alpha1
 kind: Foo
 metadata:
   name: test
-spec:
-  testString: "first foo"
-  testNum: 1
+testString: "first foo"
+testNum: 1
+nonExistingField: "test"

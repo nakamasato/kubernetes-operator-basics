@@ -20,16 +20,12 @@ var gvr = schema.GroupVersionResource{
 	Resource: "foos",
 }
 
-type FooSpec struct {
-	TestString string `json:"testString"`
-	TestNum    int    `json:"testNum"`
-}
-
 type Foo struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec FooSpec `json:"spec"`
+	TestString string `json:"testString"`
+	TestNum    int    `json:"testNum"`
 }
 
 type FooList struct {
