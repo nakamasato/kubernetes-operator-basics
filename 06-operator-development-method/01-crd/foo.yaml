@@ -4,4 +4,3 @@ metadata:
   name: test
 testString: "first foo"
 testNum: 1
-nonExistingField: "test"

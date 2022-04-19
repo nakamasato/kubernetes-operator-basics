@@ -12,10 +12,6 @@ spec:
     - name: v1alpha1
       served: true # served via REST APIs
       storage: true # There must be exactly one version with storage=true. StorageVersion
-      additionalPrinterColumns:
-        - name: Test String
-          jsonPath: .testString
-          type: string
       schema:
         openAPIV3Schema:
           type: object
