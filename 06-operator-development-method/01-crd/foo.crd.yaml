@@ -23,8 +23,6 @@ spec:
                   type: string
                 testNum:
                   type: integer
-                  minimum: 1
-                  maximum: 10
             status:
               type: object
               properties:
