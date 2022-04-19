@@ -1,4 +1,4 @@
-module foo
+module listfoo
 
 go 1.18
 

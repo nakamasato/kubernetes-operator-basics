@@ -1,10 +1,10 @@
-# Client Go
+# List Pods with client-go
 
 1. Install go from https://go.dev/doc/install.
 1. Init go module (ref: https://go.dev/ref/mod#go-mod-init)
 
     ```
-    go mod init foo
+    go mod init listpod
     go mod tidy
     ```
 1. Make sure k8s cluster is running. (or start a kind cluster with `kind create cluster`)
