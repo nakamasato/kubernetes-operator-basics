@@ -36,15 +36,24 @@ type FooList struct {
 }
 
 func listFoos(client dynamic.Interface, namespace string) (*FooList, error) {
+	// list is *unstructured.UnstructuredList
+	// https://github.com/kubernetes/client-go/blob/master/dynamic/simple.go#L272-L294
 	list, err := client.Resource(gvr).Namespace(namespace).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
+
+	// MarshalJSON ensures that the unstructured object produces proper JSON when passed to Go's standard JSON library.
+	// func (u *Unstructured) MarshalJSON() ([]byte, error)
+	// https://pkg.go.dev/k8s.io/apimachinery/pkg/apis/meta/v1/unstructured#Unstructured.MarshalJSON
 	data, err := list.MarshalJSON()
 	if err != nil {
 		return nil, err
 	}
+
 	var fooList FooList
+	// Unmarshal parses the JSON-encoded data and stores the result in the value pointed to by v.
+	// https://pkg.go.dev/encoding/json#Unmarshal
 	if err := json.Unmarshal(data, &fooList); err != nil {
 		return nil, err
 	}

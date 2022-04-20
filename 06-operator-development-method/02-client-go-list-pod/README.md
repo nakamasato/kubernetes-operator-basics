@@ -5,6 +5,29 @@
     go version
     ```
 1. Create `main.go`.
+    ```go
+    pods, _ := clientset.CoreV1().Pods("").List(context.Background(), metav1.ListOptions{})
+    ```
+
+    [List function for Pods](https://github.com/kubernetes/client-go/blob/master/kubernetes/typed/core/v1/pod.go#L88-L102):
+    ```go
+    func (c *pods) List(ctx context.Context, opts metav1.ListOptions) (result *v1.PodList, err error) {
+        var timeout time.Duration
+        if opts.TimeoutSeconds != nil {
+            timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
+        }
+        result = &v1.PodList{}
+        err = c.client.Get().
+            Namespace(c.ns).
+            Resource("pods").
+            VersionedParams(&opts, scheme.ParameterCodec).
+            Timeout(timeout).
+            Do(ctx).
+            Into(result)
+        return
+    }
+    ```
+
 1. Init go module (ref: https://go.dev/ref/mod#go-mod-init)
 
     ```
