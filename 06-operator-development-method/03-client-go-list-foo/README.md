@@ -8,11 +8,38 @@
 1. List `Foos` with client-go.
     1. Define `Foo` and `FooList` with `struct`.
         ```go
+        var gvr = schema.GroupVersionResource{
+            Group:    "example.com",
+            Version:  "v1alpha1",
+            Resource: "foos",
+        }
 
+        type Foo struct {
+            metav1.TypeMeta   `json:",inline"`
+            metav1.ObjectMeta `json:"metadata,omitempty"`
+
+            TestString string `json:"testString"`
+            TestNum    int    `json:"testNum"`
+        }
+
+        type FooList struct {
+            metav1.TypeMeta `json:",inline"`
+            metav1.ListMeta `json:"metadata,omitempty"`
+
+            Items []Foo `json:"items"`
+        }
         ```
     1. Make `listFoos` func to list `Foos` with `dynamic.Interface`.
+
+        Steps:
+        1. `dynamicClient.List()` → `*unstructured.UnstructuredList`
+        1. `*unstructured.UnstructuredList.MarshalJSON()` → `[]byte`
+        1. `json.Unmarshal([]byte, &fooList)` → `FooList`
+
+        dynamic:
         ```go
-        list, err := client.Resource(gvr).Namespace(namespace).List(context.Background(), metav1.ListOptions{}) // returns (*unstructured.UnstructuredList, error)
+        list, err := client.Resource(gvr).Namespace(namespace).List(context.Background(), metav1.ListOptions{})
+        // List() returns (*unstructured.UnstructuredList, error)
         ```
 
         [List for dynamicResourceClient](https://github.com/kubernetes/client-go/blob/28ccde769fc5519dd84e5512ebf303ac86ef9d7c/dynamic/simple.go#L272-L294):
