@@ -1,6 +1,9 @@
 # List Pods with client-go
 
-1. Install go from https://go.dev/doc/install.
+1. Install Go from https://go.dev/doc/install.
+    ```
+    go version
+    ```
 1. Init go module (ref: https://go.dev/ref/mod#go-mod-init)
 
     ```
@@ -35,3 +38,7 @@
     ```
 
     </details>
+
+## Go libraries
+- https://pkg.go.dev/k8s.io/client-go: Go clients for talking to a kubernetes cluster.
+- https://pkg.go.dev/k8s.io/apimachinery: Scheme, typing, encoding, decoding, and conversion packages for Kubernetes and Kubernetes-like API objects.
