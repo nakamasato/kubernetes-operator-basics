@@ -20,4 +20,4 @@
     ```
 
 ## Go libraries
--
+- https://pkg.go.dev/k8s.io/client-go/dynamic
