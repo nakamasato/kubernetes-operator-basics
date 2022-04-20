@@ -10,6 +10,7 @@
     go mod init listpod
     go mod tidy
     ```
+1. Create `main.go`.
 1. Make sure k8s cluster is running. (or start a kind cluster with `kind create cluster`)
 1. Run.
     ```
