@@ -6,7 +6,7 @@
     kubectl apply -f ../01-crd/foo.yaml
     ```
 1. List `Foos` with client-go.
-    1. Define `Foo`, `FooSpec`, `FooList`
+    1. Define `Foo` and `FooList` with `struct`.
     1. Make `listFoos` func to list `Foos` with `dynamic.Interface`.
 1. Run.
     ```
@@ -18,3 +18,6 @@
     INDEX   NAMESPACE       NAME
     0       default test
     ```
+
+## Go libraries
+-

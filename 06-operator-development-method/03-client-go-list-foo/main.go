@@ -59,19 +59,25 @@ func main() {
 	}
 
 	// Set kubeconfig flag
+	// String defines a string flag with specified name, default value, and usage string. The return value is the address of a string variable that stores the value of the flag.
+	// https://pkg.go.dev/flag#String
 	kubeconfig := flag.String("kubeconfig", defaultKubeConfigPath, "kubeconfig config file")
 	flag.Parse()
 
-	// Retrieve kubeconfig
+	// Get kubeconfig
+	// func BuildConfigFromFlags(masterUrl, kubeconfigPath string) (*restclient.Config, error)
+	// BuildConfigFromFlags is a helper function that builds configs from a master url or a kubeconfig filepath.
 	config, _ := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 
-	// Get clientset for kubernetes resources
+	// func NewForConfig(c *rest.Config) (*Clientset, error)
+	// NewForConfig creates a new Clientset for the given config.
+	// https://pkg.go.dev/k8s.io/client-go/kubernetes#NewForConfig
 	clientset, _ := dynamic.NewForConfig(config)
 
-	// Get list of foo objects from all namespaces
+	// Get list of Foo objects from all namespaces
 	foos, _ := listFoos(clientset, "")
 
-	// show foo object to stdout
+	// Print Foo objects
 	fmt.Println("INDEX\tNAMESPACE\tNAME")
 	for i, foo := range foos.Items {
 		fmt.Printf("%d\t%s\t%s\n", i, foo.GetNamespace(), foo.GetName())
