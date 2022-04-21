@@ -79,18 +79,20 @@ func main() {
 	// BuildConfigFromFlags is a helper function that builds configs from a master url or a kubeconfig filepath.
 	config, _ := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 
-	// func NewForConfig(c *rest.Config) (*Clientset, error)
-	// NewForConfig creates a new Clientset for the given config.
-	// https://pkg.go.dev/k8s.io/client-go/kubernetes#NewForConfig
-	clientset, _ := dynamic.NewForConfig(config)
+	// func NewForConfig(inConfig *rest.Config) (Interface, error)
+	// NewForConfig creates a new dynamic client or returns an error.
+	// https://pkg.go.dev/k8s.io/client-go/dynamic#NewForConfig
+	client, _ := dynamic.NewForConfig(config)
 
 	for {
 		// Get list of Foo objects from all namespaces
-		foos, _ := listFoos(clientset, "")
+		foos, _ := listFoos(client, "")
 
 		// Print Foo objects
 		for i, foo := range foos.Items {
 			fmt.Printf("%d\t%s\t%s\n", i, foo.GetNamespace(), foo.GetName())
+			// Check if there's corresponding Pod.
+
 		}
 		time.Sleep(1 * time.Second)
 	}
