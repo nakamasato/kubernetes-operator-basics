@@ -84,3 +84,64 @@ kubectl apply -f ../01-crd/foo.crd.yaml
     ```
 
 1. Check if there's corresponding Pod.
+
+    <details><summary>diff</summary>
+
+    ```diff
+    +++ b/06-operator-development-method/04-baby-operator/main.go
+    @@ -11,6 +11,7 @@ import (
+            metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+            "k8s.io/apimachinery/pkg/runtime/schema"
+            "k8s.io/client-go/dynamic"
+    +       "k8s.io/client-go/kubernetes"
+            "k8s.io/client-go/tools/clientcmd"
+            "k8s.io/client-go/util/homedir"
+     )
+    @@ -84,6 +85,8 @@ func main() {
+            // https://pkg.go.dev/k8s.io/client-go/dynamic#NewForConfig
+            client, _ := dynamic.NewForConfig(config)
+
+    +       clientset, _ := kubernetes.NewForConfig(config)
+    +
+            for {
+                    // Get list of Foo objects from all namespaces
+                    foos, _ := listFoos(client, "")
+    @@ -92,7 +95,12 @@ func main() {
+                    for i, foo := range foos.Items {
+                            fmt.Printf("%d\t%s\t%s\n", i, foo.GetNamespace(), foo.GetName())
+                            // Check if there's corresponding Pod.
+    -
+    +                       pod, err := clientset.CoreV1().Pods(foo.GetNamespace()).Get(context.Background(), foo.GetName(), metav1.GetOptions{})
+    +                       if err != nil {
+    +                               fmt.Printf("failed to get pod %v\n", err)
+    +                       } else {
+    +                               fmt.Printf("successfully got pod %s\n", pod.GetName())
+    +                       }
+                    }
+                    time.Sleep(1 * time.Second)
+            }
+    ```
+
+
+    </details>
+
+    Update necessary packages:
+    ```
+    go mod tidy
+    ```
+
+    Run:
+    ```
+    go run main.go
+    0       default test
+    failed to get pod pods "test" not found
+    0       default test
+    failed to get pod pods "test" not found
+    0       default test
+    failed to get pod pods "test" not found
+    0       default test
+    failed to get pod pods "test" not found
+    0       default test
+    failed to get pod pods "test" not found
+    ^Csignal: interrupt
+    ```
