@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"path/filepath"
+	"time"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -83,12 +84,14 @@ func main() {
 	// https://pkg.go.dev/k8s.io/client-go/kubernetes#NewForConfig
 	clientset, _ := dynamic.NewForConfig(config)
 
-	// Get list of Foo objects from all namespaces
-	foos, _ := listFoos(clientset, "")
+	for {
+		// Get list of Foo objects from all namespaces
+		foos, _ := listFoos(clientset, "")
 
-	// Print Foo objects
-	fmt.Println("INDEX\tNAMESPACE\tNAME")
-	for i, foo := range foos.Items {
-		fmt.Printf("%d\t%s\t%s\n", i, foo.GetNamespace(), foo.GetName())
+		// Print Foo objects
+		for i, foo := range foos.Items {
+			fmt.Printf("%d\t%s\t%s\n", i, foo.GetNamespace(), foo.GetName())
+		}
+		time.Sleep(1 * time.Second)
 	}
 }

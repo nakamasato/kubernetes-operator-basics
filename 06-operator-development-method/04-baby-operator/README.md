@@ -35,13 +35,52 @@ kubectl apply -f ../01-crd/foo.crd.yaml
 
 1. Make a loop to continuously list `Foo` objects.
 
-    ```diff
-        // Get list of Foo objects from all namespaces
-        foos, _ := listFoos(clientset, "")
+    <details><summary>diff</summary>
 
-        // Print Foo objects
-        fmt.Println("INDEX\tNAMESPACE\tNAME")
-        for i, foo := range foos.Items {
-            fmt.Printf("%d\t%s\t%s\n", i, foo.GetNamespace(), foo.GetName())
-        }
+    ```diff
+    +++ b/06-operator-development-method/04-baby-operator/main.go
+    @@ -6,6 +6,7 @@ import (
+            "flag"
+            "fmt"
+            "path/filepath"
+    +       "time"
+
+            metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+            "k8s.io/apimachinery/pkg/runtime/schema"
+    @@ -83,12 +84,14 @@ func main() {
+            // https://pkg.go.dev/k8s.io/client-go/    kubernetes#NewForConfig
+            clientset, _ := dynamic.NewForConfig(config)
+
+    -       // Get list of Foo objects from all namespaces
+    -       foos, _ := listFoos(clientset, "")
+    +       for {
+    +               // Get list of Foo objects from all namespaces
+    +               foos, _ := listFoos(clientset, "")
+
+    -       // Print Foo objects
+    -       fmt.Println("INDEX\tNAMESPACE\tNAME")
+    -       for i, foo := range foos.Items {
+    -               fmt.Printf("%d\t%s\t%s\n", i, foo.GetNamespace    (), foo.GetName())
+    +               // Print Foo objects
+    +               for i, foo := range foos.Items {
+    +                       fmt.Printf("%d\t%s\t%s\n", i, foo.    GetNamespace(), foo.GetName())
+    +               }
+    +               time.Sleep(1 * time.Second)
+            }
+     }
     ```
+
+    </details>
+
+    Run:
+    ```
+    go run main.go
+    0       default test
+    0       default test
+    0       default test
+    0       default test
+    0       default test
+    ^Csignal: interrupt
+    ```
+
+1. Check if there's corresponding Pod.
