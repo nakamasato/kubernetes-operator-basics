@@ -15,9 +15,9 @@ This is a Kubernetes operator-ish application, which is not a complete operator 
 
 ### 1. Create custom resource `Foo`
 
-Create custom resource `Foo` with [foo.crd.yaml](../01-crd/foo.crd.yaml).
+Create custom resource `Foo` with [foo.crd.yaml](../01-crd/foo.crd.yaml) and `Foo` object with [foo.yaml](../01-crd/foo.yaml).
 ```
-kubectl apply -f ../01-crd/foo.crd.yaml
+kubectl apply -f ../01-crd
 ```
 ### 2. Create a custom controller-ish code `main.go`
 
