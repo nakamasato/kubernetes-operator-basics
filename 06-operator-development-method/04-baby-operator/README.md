@@ -163,11 +163,11 @@ kubectl apply -f ../01-crd
             metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
             "k8s.io/apimachinery/pkg/runtime/schema"
             "k8s.io/client-go/dynamic"
-    @@ -62,6 +64,31 @@ func listFoos(client dynamic.Interface,     namespace string) (*FooList, error) {
+    @@ -62,6 +64,31 @@ func listFoos(client dynamic.Interface, namespace string) (*FooList, error) {
             return &fooList, nil
      }
 
-    +func createPod(clientset *kubernetes.Clientset, namespace,     name string) error {
+    +func createPod(clientset *kubernetes.Clientset, namespace, name string) error {
     +       pod := &v1.Pod{
     +               ObjectMeta: metav1.ObjectMeta{
     +                       Name:      name,
@@ -177,13 +177,13 @@ kubectl apply -f ../01-crd
     +                       Containers: []v1.Container{
     +                               {
     +                                       Name:  "busybox",
-    +                                       Image: "gcr.io/    google_containers/echoserver:1.4",
+    +                                       Image: "gcr.io/google_containers/echoserver:1.4",
     +                               },
     +                       },
     +                       RestartPolicy: v1.RestartPolicyAlways,
     +               },
     +       }
-    +       _, err := clientset.CoreV1().Pods(namespace).Create    (context.TODO(), pod, metav1.CreateOptions{})
+    +       _, err := clientset.CoreV1().Pods(namespace).Create(context.TODO(), pod, metav1.CreateOptions{})
     +       if err != nil {
     +               fmt.Printf("failed to create Pod %v\n", err)
     +               return err
