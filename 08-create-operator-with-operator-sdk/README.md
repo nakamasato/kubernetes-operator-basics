@@ -1,4 +1,4 @@
-# Operator SDK
+# Create Operator with Operator SDK
 
 Install Operator SDK CLI:
 
