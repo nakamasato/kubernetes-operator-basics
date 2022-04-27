@@ -15,3 +15,8 @@
 1. [Create Operator in Kubernetes way](09-create-operator-in-kubernetes-way)
 1. Operator Components
 1. Operator Development Tips
+
+## CheatSheet
+
+1. [kind](99-cheatsheet/kind)
+1. [kubebuilder](99-cheatsheet/kubebuilder)
