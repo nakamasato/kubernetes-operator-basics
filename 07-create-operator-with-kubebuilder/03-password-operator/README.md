@@ -43,6 +43,13 @@ kubebuilder create api --group secret --version v1alpha1 --kind Password
 
 <details><summary>If failed</summary>
 
+If you're using `kubebuilder` version less than 3.4.0 and go version 1.18, you'll encounter the following error.
+
+```
+bash: /path/to/your/guestbook/bin/controller-gen: No such file or directory
+make: *** [generate] Error 127
+```
+
 Fix `Makefile` -> Commit `git commit -m "Fix Makefile"`
 
 ```Makefile
@@ -1247,3 +1254,11 @@ kubectl delete -f https://github.com/cert-manager/cert-manager/releases/download
 1. Add status to CRD
 1. Create a webhook
 1. Implement a webhook
+
+## Versions
+
+Checked version pairs:
+
+|Docker|kind|kubernetes|kubebuilder|
+|---|-----|---|---|
+|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.0)|

@@ -1,79 +1,11 @@
-## 2. [Quick Start](https://book.kubebuilder.io/quick-start.html)
+# 2. [Quick Start](https://book.kubebuilder.io/quick-start.html)
 
 In this tutorial, we'll learn the followings:
 1. Initialize an kubebuilder project with `kubebuilder` command
 1. Create a custom resource `GuestBook` with `kubebuilder` command
 1. Run an operator in your local and Kubernetes cluster
 
-### 2.1. Install kubebuilder
-
-```
-# download kubebuilder and install locally.
-curl -L -o kubebuilder https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)
-chmod +x kubebuilder && mv kubebuilder /usr/local/bin/
-```
-
-https://book.kubebuilder.io/quick-start.html#installation
-
-```
-kubebuilder version
-Version: main.version{KubeBuilderVersion:"3.3.0", KubernetesVendor:"1.23.1", GitCommit:"47859bf2ebf96a64db69a2f7074ffdec7f15c1ec", BuildDate:"2022-01-18T17:03:29Z", GoOs:"darwin", GoArch:"amd64"}
-```
-
-<details><summary>Check Commands</summary>
-
-```
-kubebuilder
-CLI tool for building Kubernetes extensions and tools.
-
-Usage:
-  kubebuilder [flags]
-  kubebuilder [command]
-
-Examples:
-The first step is to initialize your project:
-    kubebuilder init [--plugins=<PLUGIN KEYS> [--project-version=<PROJECT VERSION>]]
-
-<PLUGIN KEYS> is a comma-separated list of plugin keys from the following table
-and <PROJECT VERSION> a supported project version for these plugins.
-
-                        Plugin keys | Supported project versions
-------------------------------------+----------------------------
-          base.go.kubebuilder.io/v3 |                          3
-   declarative.go.kubebuilder.io/v1 |                       2, 3
-               go.kubebuilder.io/v2 |                       2, 3
-               go.kubebuilder.io/v3 |                          3
- kustomize.common.kubebuilder.io/v1 |                          3
-
-For more specific help for the init command of a certain plugins and project version
-configuration please run:
-    kubebuilder init --help --plugins=<PLUGIN KEYS> [--project-version=<PROJECT VERSION>]
-
-Default plugin keys: "go.kubebuilder.io/v3"
-Default project version: "3"
-
-
-Available Commands:
-  alpha       Alpha-stage subcommands
-  completion  Load completions for the specified shell
-  create      Scaffold a Kubernetes API or webhook
-  edit        Update the project configuration
-  help        Help about any command
-  init        Initialize a new project
-  version     Print the kubebuilder version
-
-Flags:
-  -h, --help                     help for kubebuilder
-      --plugins strings          plugin keys to be used for this subcommand execution
-      --project-version string   project version (default "3")
-
-Use "kubebuilder [command] --help" for more information about a command.
-```
-
-</details>
-
-
-### 2.2. Start a project
+## 2.1. Start a project
 
 ```
 mkdir -p ~/projects/guestbook
@@ -159,7 +91,7 @@ tree .
 1. Makefile
 1. config
 
-## 2.3. Create an API
+## 2.2. Create an API
 
 ```
 kubebuilder create api --group webapp --version v1 --kind Guestbook
@@ -290,10 +222,9 @@ Global Flags:
 ```
 
 - Fixed in [✨ Remove deprecated go get from Makefile templates](https://github.com/kubernetes-sigs/kubebuilder/pull/2486)
-- But the latest release [v3.3.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.3.0) hasn't include the change yet as of the writing (2022-04-27).
+- [v3.4.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.0) or later resolves the issue.
 
-Quick fix is updating Makefile:
-
+Quick fix for the older version (v3.3.0 or older) is updating Makefile:
 
 ```diff
 - CONTROLLER_GEN = $(shell pwd)/bin/controller-gen
@@ -382,9 +313,11 @@ controller-gen generates the following files:
 - `config/crd/bases/webapp.my.domain_guestbooks.yaml`: `CRD` file for `Guestbook`
 - `config/rbac/role.yaml`: `ClusterRole` for the operator (`manager-role`)
 
-## 2.4. Test It Out
+`Makefile` is a collection of frequently used commands. For more details, we'll see it in a later section.
 
-1. Start your Kubernetes cluster.
+## 2.3. Run the operator in your local
+
+1. Start your Kubernetes cluster with kind. (You can use any Kubernetes cluster)
     ```
     kind create cluster
     ```
@@ -398,7 +331,8 @@ controller-gen generates the following files:
     ```bash
     make install # internally just run `kustomize build config/crd | kubectl apply -f -`
     ```
-1. Run your controller in your local.
+
+1. Run your controller in your local. (internally `go run main.go`)
     ```
     make run
     ```
@@ -432,7 +366,7 @@ controller-gen generates the following files:
     kubectl apply -f config/samples/
     ```
 
-    Nothing happens at this point as we haven't implemented anything yet.
+    Nothing happens at this point as we haven't implemented anything yet. We'll implement a logic to capture create, update, and delete operation of the custom resource later.
 
 1. Clean up the created insatnce.
 
@@ -446,7 +380,6 @@ controller-gen generates the following files:
     make uninstall
     ```
 
-
 Let's wrap up what we've done:
 1. Prepare a Kubernetes cluster.
 1. Install CRD.
@@ -458,14 +391,16 @@ Let's wrap up what we've done:
 
 We use local run for development.
 
-## 2.5. Run It On the Cluster
+## 2.4. Run the operator in a Kubernetes cluster
 
 1. Prepare a Kubernetes cluster (same as above)
     You can skip this step if you already set up your `kind` cluster above.
+
 1. Install CRD (same as above).
     ```
     make install
     ```
+
 1. Run the operator **on the Kubernetes cluster**.
     1. Set `IMG` variable.
         ```
@@ -493,24 +428,29 @@ We use local run for development.
         ```
         make deploy IMG=$IMG
         ```
+
     1. Check Pods in `guestbook-system` namespace.
         ```
         kubectl get po -n guestbook-system
         NAME                                            READY   STATUS    RESTARTS   AGE
         guestbook-controller-manager-6897c6457c-b8dtz   2/2     Running   0          2m26s
         ```
+
 1. Create an instance/object of the Custom Resource. (same as above)
     ```
     kubectl apply -f config/samples/
     ```
+
 1. Delete the instance/object of the Custom Resource. (same as above)
     ```
     kubectl delete -f config/samples/
     ```
+
 1. Stop the operator.
     ```
     make undeploy
     ```
+
 1. Uninstall CRD. (same as above)
     ```
     make uninstall
