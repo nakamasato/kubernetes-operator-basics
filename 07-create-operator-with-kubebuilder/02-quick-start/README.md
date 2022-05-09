@@ -3,7 +3,8 @@
 In this tutorial, we'll learn the followings:
 1. Initialize an kubebuilder project with `kubebuilder` command
 1. Create a custom resource `GuestBook` with `kubebuilder` command
-1. Run an operator in your local and Kubernetes cluster
+1. Run the operator in your local
+1. Run the operator in a Kubernetes cluster
 
 ## 2.1. Start a project
 
@@ -308,8 +309,11 @@ Modified files:
     1. New resource added to scheme.
     1. Initialize `GuestbookReconciler` with Manager.
 
-Run `make manifests`.
-controller-gen generates the following files:
+```
+make manifests
+```
+
+With this command, controller-gen generates the following files:
 - `config/crd/bases/webapp.my.domain_guestbooks.yaml`: `CRD` file for `Guestbook`
 - `config/rbac/role.yaml`: `ClusterRole` for the operator (`manager-role`)
 
@@ -472,12 +476,15 @@ We use local run for development.
     - run in local: `make run`
     - run in Kubernetes cluster: `make deploy IMG=<IMG>`
 1. Create an instance/object of the Custom Resource. `kubectl apply -f config/samples/`
-1. Delete the instance/object of the Custom Resource. `kubectl apply -f config/samples/`
+1. Delete the instance/object of the Custom Resource. `kubectl delete -f config/samples/`
 1. Stop the operator.
     - running in local: `ctrl + C`
     - running in Kubernetes: `make undeploy`
 1. Uninstall CRD. `make uninstall`
 
+Cheatsheet:
+1. [kind](../../99-cheatsheet/kind)
+1. [kubebuilder](../../99-cheatsheet/kubebuilder): `kubebuilder` and `make` commands
 ## Versions
 
 Checked version pairs:
