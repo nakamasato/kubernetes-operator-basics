@@ -487,3 +487,4 @@ Checked version pairs:
 |Docker|kind|kubernetes|kubebuilder|
 |---|-----|---|---|
 |[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.3.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.3.0)|
+|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.1](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.1)|
