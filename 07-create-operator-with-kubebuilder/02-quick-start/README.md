@@ -455,11 +455,6 @@ We use local run for development.
     make undeploy
     ```
 
-1. Uninstall CRD. (same as above)
-    ```
-    make uninstall
-    ```
-
 ## 2.6. Wrap-up
 
 ### `kubebuilder` commands
