@@ -8,7 +8,7 @@
 
 When custom resource `Password` is created, `Secret` with `password` field is created with the same name as the `Password` object.
 
-TODO: diagram
+![](01-design-operator.drawio.svg)
 
 ## 2. Create a project
 
@@ -30,10 +30,6 @@ Commit the generated files.
 ```
 git add . && git commit -m "Init project"
 ```
-
-Explain about the project overview:
-1. what's in main.go.
-    1. main -> `Manager` -> controllers
 
 ## 3. Create API `Password`
 
@@ -560,13 +556,20 @@ Use for password generation: https://github.com/sethvargo/go-password
 
 
 ```go
-    passwordStr, err := password.Generate(64, 10, 10, false, false)
+import (
+    passwordGenerator "github.com/sethvargo/go-password/password"
+    ...
+)
+```
+
+```go
+    passwordStr, err := passwordGenerator.Generate(64, 10, 10, false, false)
     if err != nil {
         logger.Error(err, "2. Create Secret object if not exists - failed to generate password")
         return ctrl.Result{}, err
     }
-    secret := newSecretForPassword(&passwordObj, passwordStr)
-    err = ctrl.SetControllerReference(&passwordObj, secret, r.Scheme) // Set owner of this Secret
+    secret := newSecretForPassword(&password, passwordStr)
+    err = ctrl.SetControllerReference(&password, secret, r.Scheme) // Set owner of this Secret
 ```
 
 ```go
@@ -717,11 +720,11 @@ Use these values in the controller (`controllers/password_controller.go`).
 
 ```go
             passwordStr, err := password.Generate(
-                passwordObj.Spec.Length,
-                passwordObj.Spec.Digit,
-                passwordObj.Spec.Symbol,
-                passwordObj.Spec.CaseSensitive,
-                passwordObj.Spec.DisallowRepeat,
+                password.Spec.Length,
+                password.Spec.Digit,
+                password.Spec.Symbol,
+                password.Spec.CaseSensitive,
+                password.Spec.DisallowRepeat,
             )
 ```
 
@@ -814,8 +817,8 @@ Update controller
 ```go
 func (r *PasswordReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
     // ...
-    passwordObj.Status.State = secretv1alpha1.PasswordInSync
-    if err := r.Status().Update(ctx, &passwordObj); err != nil {
+    password.Status.State = secretv1alpha1.PasswordInSync
+    if err := r.Status().Update(ctx, &password); err != nil {
         logger.Error(err, "Failed to update Password status")
         return ctrl.Result{}, err
     }
@@ -850,8 +853,8 @@ kubectl get password password-sample -o jsonpath='{.status}'
 In the same way, let's add status for `Failed`. Add the following lines to where to return error in reconcile function.
 
 ```go
-passwordObj.Status.State = secretv1alpha1.PasswordFailed
-if err := r.Status().Update(ctx, &passwordObj); err != nil {
+password.Status.State = secretv1alpha1.PasswordFailed
+if err := r.Status().Update(ctx, &password); err != nil {
     logger.Error(err, "Failed to update Password status")
     return ctrl.Result{}, err
 }
