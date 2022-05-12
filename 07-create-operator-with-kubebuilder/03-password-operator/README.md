@@ -1311,7 +1311,7 @@ Commit: `git add . && git commit -am "[API] Implement validating admission webho
 
 ## Versions
 
-Checked version pairs:
+Checked version combinations:
 
 |Docker|kind|kubernetes|kubebuilder|
 |---|-----|---|---|
