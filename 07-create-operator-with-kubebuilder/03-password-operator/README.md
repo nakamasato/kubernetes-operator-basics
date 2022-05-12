@@ -277,14 +277,14 @@ type Result struct {
 
 Add the following lines to `Reconcile function`
 ```go
-// 1. Fetch Password object
+// Fetch Password object
 var password secretv1alpha1.Password
 if err := r.Get(ctx, req.NamespacedName, &password); err != nil {
-    logger.Error(err, "1. Fetch Password object - failed")
+    logger.Error(err, "Fetch Password object - failed")
     return ctrl.Result{}, client.IgnoreNotFound(err)
 }
 
-logger.Info("1. Fetch Password object - succeeded", "password", password.Name, "createdAt", password.CreationTimestamp)
+logger.Info("Fetch Password object - succeeded", "password", password.Name, "createdAt", password.CreationTimestamp)
 ```
 
 run!
@@ -298,7 +298,7 @@ kubectl apply -f config/samples
 ```
 
 ```
-1.651098875458412e+09   INFO    controller.password     1. Fetch Password object - succeeded   {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "password": "password-sample", "createdAt": "2022-04-28 07:34:35 +0900 JST"}
+1.651098875458412e+09   INFO    controller.password     Fetch Password object - succeeded   {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "password": "password-sample", "createdAt": "2022-04-28 07:34:35 +0900 JST"}
 ```
 
 ```
@@ -306,7 +306,7 @@ kubectl delete -f config/samples
 ```
 
 ```
-1.651102065284576e+09   ERROR   controller.password     1. Fetch Password object - failed      {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "error": "Password.secret.example.com \"password-sample\" not found"}
+1.651102065284576e+09   ERROR   controller.password     Fetch Password object - failed      {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "error": "Password.secret.example.com \"password-sample\" not found"}
 sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).Reconcile
         /Users/nakamasato/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.11.0/pkg/internal/controller/controller.go:114
 sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).reconcileHandler
@@ -336,26 +336,26 @@ import (
 ```
 
 ```go
-    // 2. Create Secret object if not exists
+    // Create Secret object if not exists
     var secret corev1.Secret
     if err := r.Get(ctx, req.NamespacedName, &secret); err != nil {
         if errors.IsNotFound(err) {
             // Create Secret
-            logger.Info("2. Create Secret object if not exists - create secret")
+            logger.Info("Create Secret object if not exists - create secret")
             secret := newSecretFromPassword(&password)
             err = r.Create(ctx, secret)
             if err != nil {
-                logger.Error(err, "2. Create Secret object if not exists - failed to create Secret")
+                logger.Error(err, "Create Secret object if not exists - failed to create Secret")
                 return ctrl.Result{}, err
             }
-            logger.Info("2. Create Secret object if not exists - Secret successfully created")
+            logger.Info("Create Secret object if not exists - Secret successfully created")
         } else {
-            logger.Error(err, "2. Create Secret object if not exists - failed to fetch Secret")
+            logger.Error(err, "Create Secret object if not exists - failed to fetch Secret")
             return ctrl.Result{}, err
         }
     }
 
-    logger.Info("2. Create Secret object if not exists - completed")
+    logger.Info("Create Secret object if not exists - completed")
 ```
 
 ```go
@@ -385,10 +385,10 @@ kubectl apply -f config/samples
 
 ```
 1.6511075442946272e+09  INFO    controller.password     Reconcile is called.    {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
-1.651107544294673e+09   INFO    controller.password     1. Fetch Password object - succeeded    {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "password": "password-sample", "createdAt": "2022-04-28 09:59:04 +0900 JST"}
-1.6511075444954848e+09  INFO    controller.password     2. Create Secret object if not exists - create secret       {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
-1.651107544582052e+09   INFO    controller.password     2. Create Secret object if not exists - Secret successfully created {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
-1.651107544582082e+09   INFO    controller.password     2. Create Secret object if not exists - completed   {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
+1.651107544294673e+09   INFO    controller.password     Fetch Password object - succeeded    {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "password": "password-sample", "createdAt": "2022-04-28 09:59:04 +0900 JST"}
+1.6511075444954848e+09  INFO    controller.password     Create Secret object if not exists - create secret       {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
+1.651107544582052e+09   INFO    controller.password     Create Secret object if not exists - Secret successfully created {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
+1.651107544582082e+09   INFO    controller.password     Create Secret object if not exists - completed   {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
 ```
 
 ```
@@ -410,7 +410,7 @@ kubectl delete -f config/samples
 
 ```
 1.651107652362049e+09   INFO    controller.password     Reconcile is called.    {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
-1.651107652362087e+09   ERROR   controller.password     1. Fetch Password object - failed       {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "error": "Password.secret.example.com \"password-sample\" not found"}
+1.651107652362087e+09   ERROR   controller.password     Fetch Password object - failed       {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "error": "Password.secret.example.com \"password-sample\" not found"}
 sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).Reconcile
         /Users/nakamasato/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.11.0/pkg/internal/controller/controller.go:114
 sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).reconcileHandler
@@ -526,7 +526,7 @@ Add the following lines to `Reconcile` function just after `secret := newSecretF
 ```go
     err := ctrl.SetControllerReference(&password, secret, r.Scheme) // Set owner of this Secret
     if err != nil {
-        logger.Error(err, "2. Create Secret object if not exists - failed to set SetControllerReference")
+        logger.Error(err, "Create Secret object if not exists - failed to set SetControllerReference")
         return ctrl.Result{}, err
     }
 ```
@@ -588,7 +588,7 @@ new:
 ```go
     passwordStr, err := passwordGenerator.Generate(64, 10, 10, false, false)
     if err != nil {
-        logger.Error(err, "2. Create Secret object if not exists - failed to generate password")
+        logger.Error(err, "Create Secret object if not exists - failed to generate password")
         return ctrl.Result{}, err
     }
     secret := newSecretForPassword(&password, passwordStr)
@@ -799,7 +799,7 @@ kubectl delete -f config/samples/ && kubectl apply -f config/samples/
 You'll see the following `Error` log: `number of digits and symbols must be less than total length`
 
 ```
-1.651452110121384e+09   ERROR   controller.password     2. Create Secret object if not exists - failed to generate password {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "error": "number of digits and symbols must be less than total length"}
+1.651452110121384e+09   ERROR   controller.password     Create Secret object if not exists - failed to generate password {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "error": "number of digits and symbols must be less than total length"}
 ```
 
 The reconcilation loop failed to generate password. `Secret` was not successfully generated.
