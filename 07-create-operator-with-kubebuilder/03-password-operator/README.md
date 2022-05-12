@@ -4,13 +4,13 @@
 - Go 1.18
 - Kubebuilder: [v3.4.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.0) or later
 
-## 1. Design Operator `PasswordOperator`
+## 0. Design Operator `PasswordOperator`
 
 When custom resource `Password` is created, `Secret` with `password` field is created with the same name as the `Password` object.
 
 ![](01-design-operator.drawio.svg)
 
-## 2. Create a project
+## 1. [kubebuilder] Init project
 
 Make a directory and initialize git repository.
 ```
@@ -25,14 +25,10 @@ Initialize a project
 kubebuilder init --domain example.com --repo example.com/password-operator
 ```
 
-Commit the generated files.
+Commit: `git add . && git commit -m "[kubebuilder] Init project"`
 
-```
-git add . && git commit -m "Init project"
-```
-
-## 3. Create API `Password`
-
+## 2. [kubebuilder] Create API `Password` (Controller & Resource)
+Create an API `password`
 ```
 kubebuilder create api --group secret --version v1alpha1 --kind Password
 ```
@@ -84,10 +80,22 @@ kubebuilder create api --group secret --version v1alpha1 --kind Password --force
 
 </details>
 
+Update CRD yaml files (Go types → CRD)
 ```
 make manifests
 ```
-Commit at this point (empty `Password` API added) `git add . && git commit -m "Create API Password (Controller & Resource)"`
+
+Commit: `git add . && git commit -m "[kubebuilder] Create API Password (Controller & Resource)"`
+
+Changes:
+
+![](development.drawio.svg)
+
+three types of changes:
+1. **kubebuilder** command create files
+1. Implement **API** (schema)
+1. Implement **controller** (reconcile loop)
+
 Explain about api and controller:
 - `api/v1alpha1`
 - `controllers`
@@ -96,39 +104,8 @@ Explain about api and controller:
 1. clientset for custom resource
 1. manager -> register new resource
 1. Groups, Kinds, Versions https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md & https://book.kubebuilder.io/cronjob-tutorial/gvks.html
-By default, `Password` has `PasswordSpec` (with `Foo` field) and `PasswordStatus` (without any field):
-```go
-type PasswordSpec struct {
-    // INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-    // Important: Run "make" to regenerate code after modifying this file
-    // Foo is an example field of Password. Edit password_types.go to remove/update
-    Foo string `json:"foo,omitempty"`
-}
-type PasswordStatus struct {
-    // INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-    // Important: Run "make" to regenerate code after modifying this file
-}
-type Password struct {
-    metav1.TypeMeta   `json:",inline"`
-    metav1.ObjectMeta `json:"metadata,omitempty"`
-    Spec   PasswordSpec   `json:"spec,omitempty"`
-    Status PasswordStatus `json:"status,omitempty"`
-}
-```
-- `TypeMeta`: API version and Kind (all Kubernetes objects have)
-- `ObjectMeta`: name ,namespace, labels, ... (all Kubernetes object have)
-- `Spec`: Desired State
-- `Status`: Actual State
-- `+kubebuilder:object:root` comment is called a marker. -> telling controller-tools (our code and YAML generator) extra information.
-    - `+kubebuilder:object:root`: tell the object generator that this type represents a Kind. -> the object generator generates an implementation of the runtime.Object interface (Kinds must implement)
-- add the Go types to the API group
-    ```go
-    func init() {
-      SchemeBuilder.Register(&Password{}, &PasswordList{})
-    }
-    ```
 
-## 4. Check when Reconcile is called.
+## 3. [Controller] Add log in Reconcile function
 1. update controllers/password_controller.go
     ```go
     func (r *PasswordReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -173,11 +150,43 @@ type Password struct {
 
     From the logs, the two events (creation and deletion) triggered the `Reconcile` function exactly the same way. We cannot distinguish them in `Reconcile`. (**Important**)
 1. Stop the controller with `Ctrl+C`.
-1. Commit the change! First controller change is done! `git add . && git commit -m "Add log in Reconcile function"`
+1. Commit the change! First controller change is done! `git add . && git commit -m "[Controller] Add log in Reconcile function"`
 
 **Point**: Reconcile function is called when custom resource object is created, updated, or deleted. Inside the Reconcile function, the reconciliation logic should not be dependent on the triggering type (`created`, `updated`, `deleted`).
 
-## 5. Define API `Password`.
+## 4. [API] Remove Foo field from custom resource Password
+
+By default, `Password` has `PasswordSpec` (with `Foo` field) and `PasswordStatus` (without any field):
+```go
+type PasswordSpec struct {
+    // INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
+    // Important: Run "make" to regenerate code after modifying this file
+    // Foo is an example field of Password. Edit password_types.go to remove/update
+    Foo string `json:"foo,omitempty"`
+}
+type PasswordStatus struct {
+    // INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
+    // Important: Run "make" to regenerate code after modifying this file
+}
+type Password struct {
+    metav1.TypeMeta   `json:",inline"`
+    metav1.ObjectMeta `json:"metadata,omitempty"`
+    Spec   PasswordSpec   `json:"spec,omitempty"`
+    Status PasswordStatus `json:"status,omitempty"`
+}
+```
+- `TypeMeta`: API version and Kind (all Kubernetes objects have)
+- `ObjectMeta`: name, namespace, labels, ... (all Kubernetes object have)
+- `Spec`: Desired State
+- `Status`: Actual State
+- `+kubebuilder:object:root` comment is called a marker. -> telling controller-tools (our code and YAML generator) extra information.
+    - `+kubebuilder:object:root`: tell the object generator that this type represents a Kind. -> the object generator generates an implementation of the runtime.Object interface (Kinds must implement)
+- add the Go types to the API group
+    ```go
+    func init() {
+      SchemeBuilder.Register(&Password{}, &PasswordList{})
+    }
+    ```
 
 When you create a new resource with `kubebuilder create api`, it automatically adds a field `Foo` in spec of the new resource. You can see it in the CRD.
 
@@ -195,7 +204,7 @@ kubectl get crd passwords.secret.example.com -o jsonpath='{.spec.versions[].sche
 }
 ```
 
-Let's remove `Foo` field from `api/v1alpha1/password_types.go` and run `make manifests` to upadte the CRD yaml files `config/crd/bases/secret.example.com_passwords.yaml`.
+Let's remove `Foo` field from `api/v1alpha1/password_types.go` and run `make manifests` to update the CRD yaml files `config/crd/bases/secret.example.com_passwords.yaml`.
 
 We also need to update the CRD registered in `api-server` as `Foo` is already removed:
 
@@ -212,19 +221,20 @@ kubectl get crd passwords.secret.example.com -o jsonpath='{.spec.versions[].sche
 }
 ```
 
-Commit the change with `git commit -am "Removed Foo field from custom resource Password"`
+Commit: `git commit -am "[API] Remove Foo field from custom resource Password"`
 
-**Point**: When updating API resource,
+**Point**: When updating API resource:
+![](development-api.drawio.svg)
 1. update in `api/<version>/<custom_resource>_types.go`
 1. `make install`
     1. `make manifests`: Generate CRD `config/crd/bases/<custom_resource>.<domain>_<custom_resource>.yaml`
     1. `$(KUSTOMIZE) build config/crd | kubectl apply -f -`: Apply crd yaml file.
 
-## 6. Other API files
-- `groupversion_info.go`
-- `zz_generated.deepcopy.go`
+Other API files:
+- `groupversion_info.go`:
+- `zz_generated.deepcopy.go`:
 
-## 7. Controller
+## About Controller
 In [controller-runtime](https://pkg.go.dev/sigs.k8s.io/controller-runtime), the logic that implements the reconciling for a specific kind is called a **Reconciler**.
 
 A reconciler takes the name of an object, and returns whether or not we need to try again. (err -> reconcile again later, no error -> reconciliation completed.)
@@ -263,7 +273,7 @@ type Result struct {
 - Request just has a name.
 - Register to Manager.
 
-## 8. Reconcile - Retrieve `Password` object in `Reconcile` function.
+## 5. [Controller] Fetch Password object
 
 Add the following lines to `Reconcile function`
 ```go
@@ -306,7 +316,9 @@ sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).processNext
 sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).Start.func2.2
         /Users/nakamasato/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.11.0/pkg/internal/controller/controller.go:227
 ```
-## 9. Reconcile - Create `Secret` for `Password`
+
+Commit: `git commit -am "1. [Controller] Fetch Password object"`
+## 6. [Controller] Create Secret object if not exists
 
 Logic:
 1. Try to fetch a Secret with the same name as Password object.
@@ -368,7 +380,7 @@ make run
 ```
 
 ```
-kubectl delete -f config/samples
+kubectl apply -f config/samples
 ```
 
 ```
@@ -420,7 +432,7 @@ NAME              TYPE     DATA   AGE
 password-sample   Opaque   1      2m25s
 ```
 
-This time manually delete secret.
+manually delete secret at this point.
 
 ```
 kubectl delete secret password-sample
@@ -430,7 +442,7 @@ Let's run the operator on kubernetes cluster!
 
 ```
 IMG=password-operator:v1
-make docker-build
+make docker-build IMG=$IMG
 kind load docker-image $IMG
 make deploy IMG=$IMG
 ```
@@ -502,7 +514,9 @@ make undeploy
 
 Next: Clean up the orphaned secret!
 
-## 10. Reconcile - Associate `Secret` object with `Password` object
+Commit: `git add . && git commit -m "[Controller] Create Secret object if not exists"`
+
+## 7. [Controller] Clean up Secret when Password is deleted
 
 Logic:
 1. If Password is deleted, the corresponding Secret is also deleted.
@@ -550,10 +564,13 @@ default-token-nppdh   kubernetes.io/service-account-token   3      26h
 
 Secret `password-sample` is deleted!
 
-## 11. Generate Random Password
+Commit: `git commit -am "[Controller] Clean up Secret when Password is deleted"`
+
+## 8. [Controller] Generate random password
 
 Use for password generation: https://github.com/sethvargo/go-password
 
+Import `github.com/sethvargo/go-password/password`
 
 ```go
 import (
@@ -562,6 +579,12 @@ import (
 )
 ```
 
+remove:
+```diff
+- secret := newSecretFromPassword(&password)
+- err := ctrl.SetControllerReference(&password, secret, r.Scheme) // Set owner of this Secret
+```
+new:
 ```go
     passwordStr, err := passwordGenerator.Generate(64, 10, 10, false, false)
     if err != nil {
@@ -572,6 +595,8 @@ import (
     err = ctrl.SetControllerReference(&password, secret, r.Scheme) // Set owner of this Secret
 ```
 
+Update `newSecretForPassword` to pass `passwordStr` as an argument:
+
 ```go
 func newSecretForPassword(password *secretv1alpha1.Password, passwordStr string) *corev1.Secret {
 	secret := &corev1.Secret{
@@ -580,7 +605,7 @@ func newSecretForPassword(password *secretv1alpha1.Password, passwordStr string)
 			Namespace: password.Namespace,
 		},
 		Data: map[string][]byte{
-			"password": []byte(passwordStr), // password=123456789
+			"password": []byte(passwordStr),
 		},
 	}
 	return secret
@@ -614,22 +639,28 @@ kubectl get secret password-sample -o jsonpath='{.data.password}' | base64 --dec
 noY$Xa9KI3At(J+bwvLdqi4hDB/CT~ZxGfpR[7elWrS5Ocz=VMym)u#2F1_60jN8%
 ```
 
-Confirmed password is randomly created.
+Confirmed password is randomly generated.
 
-## 12. Make password flexible
+Commit: `git commit -am "[Controller] Generate random password"`
+
+## 9. [API&Controller] Make password configurable with CRD fields
+
+When generating a password in this line,
 
 ```go
 passwordStr, err := password.Generate(64, 10, 10, false, false)
 ```
 
 `64, 10, 10, false, false` are hard-coded in the Reconcile function.
+
 Each argument represents:
 1. password length
 1. the number of digits
 1. the number of symbols
-1. allowing upper and lower case letters
-1. disallowing repeat characters
+1. allow upper and lower case letters if true
+1. disallow repeat characters if true
 
+Let's enable to configure them with our custom resource `Password`.
 
 `api/v1alpha1/password_types.go`:
 
@@ -638,17 +669,17 @@ type PasswordSpec struct {
     //+kubebuilder:validation:Minimum=8
     //+kubebuilder:default:=20
     //+kubebuilder:validation:Required
-    Length int32 `json:"length"`
+    Length int `json:"length"`
 
     //+kubebuilder:validation:Minimum=0
     //+kubebuilder:default:=10
     //+kubebuilder:validation:Optional
-    Digit int32 `json:"digit"`
+    Digit int `json:"digit"`
 
     //+kubebuilder:validation:Minimum=0
     //+kubebuilder:default:=10
     //+kubebuilder:validation:Optional
-    Symbol int32 `json:"symbol"`
+    Symbol int `json:"symbol"`
 
     //+kubebuilder:default:=false
     //+kubebuilder:validation:Optional
@@ -677,13 +708,13 @@ spec:
 ```
 
 ```
-kubectl apply -f config/samples/secret_v1alpha1_password.yaml
+kubectl apply -f config/samples/
 ```
 
 <details>
 
 ```
-kubectl get -f config/samples/secret_v1alpha1_password.yaml -o yaml
+kubectl get -f config/samples/ -o yaml
 apiVersion: secret.example.com/v1alpha1
 kind: Password
 metadata:
@@ -719,7 +750,7 @@ spec:
 Use these values in the controller (`controllers/password_controller.go`).
 
 ```go
-            passwordStr, err := password.Generate(
+            passwordStr, err := passwordGenerator.Generate(
                 password.Spec.Length,
                 password.Spec.Digit,
                 password.Spec.Symbol,
@@ -734,7 +765,7 @@ make run
 
 Recreate the custom resource `Password`.
 ```
-kubectl delete -f config/samples/secret_v1alpha1_password.yaml && kubectl apply -f config/samples/secret_v1alpha1_password.yaml
+kubectl delete -f config/samples/ && kubectl apply -f config/samples/
 ```
 
 Check the length of the password of the generated Secret:
@@ -749,7 +780,7 @@ kubectl get secret password-sample -o jsonpath='{.data.password}' | base64 --dec
 Change the length to 30 in `config/samples/secret_v1alpha1_password.yaml` and recreate the custom resource `Password`:
 
 ```
-kubectl delete -f config/samples/secret_v1alpha1_password.yaml && kubectl apply -f config/samples/secret_v1alpha1_password.yaml
+kubectl delete -f config/samples/ && kubectl apply -f config/samples/
 ```
 
 ```
@@ -762,7 +793,7 @@ kubectl get secret password-sample -o jsonpath='{.data.password}' | base64 --dec
 Change the lengthe to 10 and recreate the custom resource `Password`:
 
 ```
-kubectl delete -f config/samples/secret_v1alpha1_password.yaml && kubectl apply -f config/samples/secret_v1alpha1_password.yaml
+kubectl delete -f config/samples/ && kubectl apply -f config/samples/
 ```
 
 You'll see the following `Error` log: `number of digits and symbols must be less than total length`
@@ -778,11 +809,13 @@ kubectl get secret password-sample -o jsonpath='{.data.password}'
 Error from server (NotFound): secrets "password-sample" not found
 ```
 
+Commit: `git commit -am "[API&Controller] Make password configurable with CRD fields"`
+
 Let's improve our operator in the two ways:
 - [ ] Update `Password`'s status to tell if custom resource is successfully updated.
 - [ ] Add validation for `digit`, `symbol`, and `length`: `number of digits and symbols must be less than total length`
 
-## 13. Add Status to custom resource
+## 10. [API&Controller] Add Password Status
 
 Update Go types:
 
@@ -804,15 +837,17 @@ Add `State` to `PasswordStatus`
 type PasswordStatus struct {
 
     // Information about if Password is in-sync.
-    State PasswordState `json:"state,omitempty"` // in-sync, syncing, failed
+    State PasswordState `json:"state,omitempty"` // in-sync, failed
 }
 ```
+
+Update CRD yaml files:
 
 ```
 make manifests
 ```
 
-Update controller
+Add the following lines at the end of `Reconcile` function in the controller:
 
 ```go
 func (r *PasswordReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -826,7 +861,7 @@ func (r *PasswordReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-Run
+Run (Apply new CRD and run the controller):
 
 ```
 make install run
@@ -842,7 +877,7 @@ spec:
 ```
 
 ```
-kubectl delete -f config/samples/secret_v1alpha1_password.yaml && kubectl apply -f config/samples/secret_v1alpha1_password.yaml
+kubectl delete -f config/samples/ && kubectl apply -f config/samples/
 ```
 
 ```
@@ -876,7 +911,7 @@ spec:
 ```
 
 ```
-kubectl delete -f config/samples/secret_v1alpha1_password.yaml && kubectl apply -f config/samples/secret_v1alpha1_password.yaml
+kubectl delete -f config/samples/ && kubectl apply -f config/samples/
 ```
 
 ```
@@ -884,13 +919,15 @@ kubectl get password password-sample -o jsonpath='{.status}'
 {"state":"Failed"}
 ```
 
-Homework: Add `Reason` to `Password` and store the failure reason for `Failed` state.
+Commit: `git commit -am "[API&Controller] Add Password Status"`
+
+Homework: Add `Reason` to `PasswordStatus` and store the failure reason for `Failed` state.
 1. Add new field to `PasswordStatus` (Go types).
 1. Regenerate CRD manifests.
 1. Add a logic to update it (controller).
 1. Run controller and apply custom resource with failure condition.
 
-## 14. List `State` when `kubectl get password`.
+## 11. [API] Add AdditionalPrinterColumns
 
 We cannot see `State` with `kubectl get` now. Let's make it visible!
 
@@ -943,7 +980,7 @@ make install run
 ```
 
 ```
-kubectl delete -f config/samples/secret_v1alpha1_password.yaml && kubectl apply -f config/samples/secret_v1alpha1_password.yaml
+kubectl delete -f config/samples/ && kubectl apply -f config/samples/
 ```
 
 ```
@@ -974,7 +1011,9 @@ NAME              AGE   STATE
 password-sample   18m   InSync
 ```
 
-## 15. Validate custom resource fields
+Commit: `git commit -am "[API] Add AdditionalPrinterColumns"`
+
+## 11. [kubebuilder] Create validating admission webhook
 
 In this section, we'll implement a validation for `digit`, `symbol`, and `length`: `number of digits and symbols must be less than total length`
 
@@ -1101,6 +1140,9 @@ There are already four functions:
 1. `ValidateUpdate`: Validation logic for `UPDATE`
 1. `ValidateDelete`: Validation logic for `DELETE`
 
+Commit: `git add . && git commit -am "[kubebuilder] Create validating admission webhook"`
+
+## 13. [API] Implement Validating Admission Webhook
 
 Implement a common validate function `validatePassword` and use it in `ValidateCreate` and `ValidateUpdate`. We just leave `ValidateDelete` as it is as we don't need to validate on deletion.
 
@@ -1210,9 +1252,9 @@ make install
 
 ```
 IMG=password-operator:webhook
-make docker-build
+make docker-build IMG=$IMG
 kind load docker-image $IMG
-make deploy
+make deploy IMG=$IMG
 ```
 
 ```
@@ -1246,17 +1288,26 @@ make undeploy
 kubectl delete -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
 ```
 
+Commit: `git add . && git commit -am "[API] Implement validating admission webhook"`
+
 ## Wrap Up
 
-1. Create a project
-1. Create an API
-1. Design API
+1. `[kubebuilder]` Init project
+1. `[kubebuilder]` Create API Password (Controller & Resource)
 1. Implement controller
-1. Install the operator (Create CRD and run the controller)
-1. Add fields to the spec of CRD
-1. Add status to CRD
-1. Create a webhook
-1. Implement a webhook
+    1. `[Controller]` Add log in Reconcile function
+    1. `[API]` Remove Foo field from custom resource Password
+    1. `[Controller]` Fetch Password object
+    1. `[Controller]` Create Secret object if not exists
+    1. `[Controller]` Clean up Secret when Password is deleted
+    1. `[Controller]` Generate random password
+1. Design API
+    1. `[API&Controller]` Make password configurable with CRD fields
+    1. `[API&Controller]` Add Password Status
+    1. `[API]` Add AdditionalPrinterColumns
+1. Webhook
+    1. `[kubebuilder]` Create validating admission webhook
+    1. `[API]` Implement validating admission webhook
 
 ## Versions
 
@@ -1265,3 +1316,4 @@ Checked version pairs:
 |Docker|kind|kubernetes|kubebuilder|
 |---|-----|---|---|
 |[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.0)|
+|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.1](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.1)|
