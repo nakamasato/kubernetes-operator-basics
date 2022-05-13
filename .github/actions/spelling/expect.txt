@@ -64,6 +64,7 @@ Okol
 PGSQL
 PVk
 Params
+Postgre
 Printf
 Println
 QOdq
@@ -91,6 +92,7 @@ Vgrp
 XErb
 ZMEv
 ZQxi
+abca
 abspath
 aca
 addrs
@@ -102,6 +104,7 @@ api
 apiextensions
 apimachinery
 apiserver
+appengine
 apps
 argoproj
 authn
@@ -142,14 +145,17 @@ createdb
 createrole
 cron
 cronjob
+cspell
 ctl
 ctx
 customresourcedefinition
+davecgh
 dbname
 dcs
 ddd
 declarativev
 deepcopy
+dfbf
 dgjpv
 dhcp
 dirname
@@ -162,6 +168,7 @@ dtz
 eab
 ebf
 echoserver
+edb
 endef
 enum
 envtest
@@ -209,6 +216,7 @@ html
 http
 httpchk
 ifconfig
+imdario
 inconshreveable
 inet
 initdb
@@ -242,6 +250,7 @@ libpq
 libyaml
 lifecycle
 linux
+listfoo
 listpod
 localhost
 logfile
@@ -251,6 +260,7 @@ masato
 mattn
 maxconn
 memcached
+mergo
 metacontroller
 metadata
 metav
@@ -282,6 +292,7 @@ nosuperuser
 nosync
 nppdh
 omitempty
+openapi
 opensource
 operatorconfiguration
 operatorframework
@@ -349,6 +360,7 @@ subresource
 sudo
 svg
 symlink
+symlinked
 sys
 syslog
 systemctl
@@ -373,6 +385,7 @@ upe
 uri
 url
 username
+usernames
 usr
 utf
 utils
@@ -405,16 +418,3 @@ ytakl
 zalan
 zalando
 zmon
-abca
-appengine
-cspell
-davecgh
-dfbf
-edb
-imdario
-listfoo
-mergo
-openapi
-Postgre
-symlinked
-usernames
