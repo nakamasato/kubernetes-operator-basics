@@ -322,7 +322,7 @@ Commit: `git commit -am "1. [Controller] Fetch Password object"`
 
 Logic:
 1. Try to fetch a Secret with the same name as Password object.
-1. Return if alredy exists. Otherwise, create a Secret.
+1. Return if already exists. Otherwise, create a Secret.
 
 Secret: https://pkg.go.dev/k8s.io/api/core/v1#Secret
 
@@ -790,7 +790,7 @@ kubectl get secret password-sample -o jsonpath='{.data.password}' | base64 --dec
       30
 ```
 
-Change the lengthe to 10 and recreate the custom resource `Password`:
+Change the length to 10 and recreate the custom resource `Password`:
 
 ```
 kubectl delete -f config/samples/ && kubectl apply -f config/samples/
