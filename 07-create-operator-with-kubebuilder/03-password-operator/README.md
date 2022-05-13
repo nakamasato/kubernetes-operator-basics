@@ -1,7 +1,7 @@
 # PasswordOperator
 
 ## Version
-- Go 1.18
+- Go 1.17.9
 - Kubebuilder: [v3.4.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.0) or later
 
 ## 0. Design Operator `PasswordOperator`
