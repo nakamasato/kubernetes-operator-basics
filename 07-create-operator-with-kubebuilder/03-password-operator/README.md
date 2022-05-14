@@ -6,13 +6,16 @@
 
 ## 0. Design Operator `PasswordOperator`
 
-When custom resource `Password` is created, `Secret` with `password` field is created with the same name as the `Password` object.
+1. Make only one Custom Resource `Password`.
+1. When custom resource `Password` is created, the controller generates a password, create a `Secret` with the same name as the `Password` object, and store the password in `password` field.
+1. Provide password generation options. e.g. password length, the number of digits and symbols, etc.
 
 ![](01-design-operator.drawio.svg)
 
 ## 1. [kubebuilder] Init project
 
-Make a directory and initialize git repository.
+Make a directory and initialize git repository
+
 ```
 mkdir -p ~/projects/password-operator
 cd ~/projects/password-operator
@@ -25,15 +28,19 @@ Initialize a project
 kubebuilder init --domain example.com --repo example.com/password-operator
 ```
 
-Commit: `git add . && git commit -m "[kubebuilder] Init project"`
+Commit
+```
+git add . && git commit -m "[kubebuilder] Init project"
+```
 
 ## 2. [kubebuilder] Create API `Password` (Controller & Resource)
-Create an API `password`
+Create an API `password` (and choose `y` for resource and controller)
+
 ```
 kubebuilder create api --group secret --version v1alpha1 --kind Password
 ```
 
-<details><summary>If failed</summary>
+<details><summary>Check if failed</summary>
 
 If you're using `kubebuilder` version less than 3.4.0 and go version 1.18, you'll encounter the following error.
 
@@ -81,76 +88,102 @@ kubebuilder create api --group secret --version v1alpha1 --kind Password --force
 </details>
 
 Update CRD yaml files (Go types → CRD)
+
 ```
 make manifests
 ```
 
-Commit: `git add . && git commit -m "[kubebuilder] Create API Password (Controller & Resource)"`
+Commit
 
-Changes:
+```
+git add . && git commit -m "[kubebuilder] Create API Password (Controller & Resource)"
+```
+
+### Column: About `kubebuilder` project development
 
 ![](development.drawio.svg)
 
-three types of changes:
-1. **kubebuilder** command create files
-1. Implement **API** (schema)
-1. Implement **controller** (reconcile loop)
+There are three types of changes:
+1. **kubebuilder** command create files (`init`, `create api`, `create webhook`, et.c)
+1. Implement **API** (schema `apis/<version>/xxx_types.go`, `apis/<version>/xxx_webhook.go`)
+1. Implement **controller** (reconcile loop `controllers/xxx_controller.go`)
 
-Explain about api and controller:
-- `api/v1alpha1`
-- `controllers`
-1. Each controller has `Reconcile` function
-1. `runtime.Object` <- `DeepCopy`
-1. clientset for custom resource
-1. manager -> register new resource
-1. Groups, Kinds, Versions https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md & https://book.kubebuilder.io/cronjob-tutorial/gvks.html
+If you're aware of which kind of change you're making, it'll be helpful to understand what exactly you're doing. I use `[kubebuilder]`, `[Controller]`, `[API]` as a prefix for each step title.
 
 ## 3. [Controller] Add log in Reconcile function
-1. update controllers/password_controller.go
-    ```go
-    func (r *PasswordReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-        logger := log.FromContext(ctx)
 
-        logger.Info("Reconcile is called.")
+Update `controllers/password_controller.go`
 
-        return ctrl.Result{}, nil
-    }
-    ```
+```go
+func (r *PasswordReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+    logger := log.FromContext(ctx)
 
-1. install `make install`
-1. run `make run`
+    logger.Info("Reconcile is called.")
 
-    ```
-    go run ./main.go
-    1.651026659120943e+09   INFO    controller-runtime.metrics     Metrics server is starting to listen    {"addr": ":8080"}
-    1.65102665912137e+09    INFO    setup   starting manager
-    1.65102665912194e+09    INFO    Starting server {"path": "/metrics", "kind": "metrics", "addr": "[::]:8080"}
-    1.65102665912202e+09    INFO    Starting server {"kind": "health probe", "addr": "[::]:8081"}
-    1.651026659122195e+09   INFO    controller.password     Starting EventSource    {"reconciler group": "secret.example.com", "reconciler kind": "Password", "source": "kind source: *v1alpha1.Password"}
-    1.65102665912222e+09    INFO    controller.password     Starting Controller     {"reconciler group": "secret.example.com", "reconciler kind": "Password"}
-    1.6510266592234979e+09  INFO    controller.password     Starting workers        {"reconciler group": "secret.example.com", "reconciler kind": "Password", "worker count": 1}
-    ```
+    return ctrl.Result{}, nil
+}
+```
 
-1. Create `Password` object with `kubectl apply -f config/samples`
-1. See logs.
-    Reconcile function is called with `Password` with name `password-sample`
-    ```
-    1.651026742035841e+09   INFO    controller.password     Reconcile is called.       {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
-    ```
+Install CRD
 
-    Let's see the arguments of `Reconcile`: `Reconcile(ctx context.Context, req ctrl.Request)`
-    - `context.Context`:
-    - `ctrl.Request`: <- Request that calls the Reconcile function. Get the object from the request.
-1. Delete the object with `kubectl delete -f config/samples`
-1. See logs.
-    Reconcile function is called with `Password` with name `password-sample`
-    ```
-    1.65102695302618e+09    INFO    controller.password     Reconcile is called.       {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
-    ```
+```
+make install
+```
 
-    From the logs, the two events (creation and deletion) triggered the `Reconcile` function exactly the same way. We cannot distinguish them in `Reconcile`. (**Important**)
-1. Stop the controller with `Ctrl+C`.
-1. Commit the change! First controller change is done! `git add . && git commit -m "[Controller] Add log in Reconcile function"`
+Run
+```
+make run
+```
+
+Result:
+
+```
+go run ./main.go
+1.651026659120943e+09   INFO    controller-runtime.metrics     Metrics server is starting to listen    {"addr": ":8080"}
+1.65102665912137e+09    INFO    setup   starting manager
+1.65102665912194e+09    INFO    Starting server {"path": "/metrics", "kind": "metrics", "addr": "[::]:8080"}
+1.65102665912202e+09    INFO    Starting server {"kind": "health probe", "addr": "[::]:8081"}
+1.651026659122195e+09   INFO    controller.password     Starting EventSource    {"reconciler group": "secret.example.com", "reconciler kind": "Password", "source": "kind source: *v1alpha1.Password"}
+1.65102665912222e+09    INFO    controller.password     Starting Controller     {"reconciler group": "secret.example.com", "reconciler kind": "Password"}
+1.6510266592234979e+09  INFO    controller.password     Starting workers        {"reconciler group": "secret.example.com", "reconciler kind": "Password", "worker count": 1}
+```
+
+Create `Password` object
+```
+kubectl apply -f config/samples
+```
+
+See logs
+
+Reconcile function is called with `Password` with name `password-sample`
+```
+1.651026742035841e+09   INFO    controller.password     Reconcile is called.       {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
+```
+
+Let's see the arguments of `Reconcile`: `Reconcile(ctx context.Context, req ctrl.Request)`
+- `context.Context`:
+- `ctrl.Request`: <- Request that calls the Reconcile function. Get the object from the request.
+
+
+Delete the object with
+```
+kubectl delete -f config/samples
+```
+
+See logs.
+Reconcile function is called with `Password` with name `password-sample`
+
+```
+1.65102695302618e+09    INFO    controller.password     Reconcile is called.       {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
+```
+
+From the logs, the two events (creation and deletion) triggered the `Reconcile` function exactly the same way. We cannot distinguish them in `Reconcile`. (**Important**)
+
+Stop the controller with `Ctrl+C`.
+Commit
+```
+git add . && git commit -m "[Controller] Add log in Reconcile function"
+```
 
 **Point**: Reconcile function is called when custom resource object is created, updated, or deleted. Inside the Reconcile function, the reconciliation logic should not be dependent on the triggering type (`created`, `updated`, `deleted`).
 
@@ -180,7 +213,7 @@ type Password struct {
 - `Spec`: Desired State
 - `Status`: Actual State
 - `+kubebuilder:object:root` comment is called a marker. -> telling controller-tools (our code and YAML generator) extra information.
-    - `+kubebuilder:object:root`: tell the object generator that this type represents a Kind. -> the object generator generates an implementation of the runtime.Object interface (Kinds must implement)
+    - `+kubebuilder:object:root`: tell the object generator that this type represents a Kind. → the object generator generates an implementation of the runtime.Object interface (Kinds must implement)
 - add the Go types to the API group
     ```go
     func init() {
@@ -221,7 +254,10 @@ kubectl get crd passwords.secret.example.com -o jsonpath='{.spec.versions[].sche
 }
 ```
 
-Commit: `git commit -am "[API] Remove Foo field from custom resource Password"`
+Commit:
+```
+git commit -am "[API] Remove Foo field from custom resource Password"
+```
 
 **Point**: When updating API resource:
 ![](development-api.drawio.svg)
@@ -237,9 +273,18 @@ Other API files:
 ## About Controller
 In [controller-runtime](https://pkg.go.dev/sigs.k8s.io/controller-runtime), the logic that implements the reconciling for a specific kind is called a **Reconciler**.
 
+<details><summary>what's controller-runtime?</summary>
+
+We studied in [operator development method](../../06-operator-development-method/05-methods/)
+
+![](../../06-operator-development-method/05-methods/comparison.drawio.svg)
+
+</details>
+
+
 A reconciler takes the name of an object, and returns whether or not we need to try again. (err -> reconcile again later, no error -> reconciliation completed.)
 
-https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/reconcile#Reconciler
+[Reconciler](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/reconcile#Reconciler):
 
 ```go
 type Reconciler interface {
@@ -249,14 +294,18 @@ type Reconciler interface {
     Reconcile(context.Context, Request) (Result, error)
 }
 ```
-https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/reconcile#Request
+
+[Request](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/reconcile#Request):
+
 ```go
 type Request struct {
     // NamespacedName is the name and namespace of the object to reconcile.
     types.NamespacedName
 }
 ```
-https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/reconcile#Result
+
+[Result](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/reconcile#Result):
+
 ```go
 type Result struct {
     // Requeue tells the Controller to requeue the reconcile key.  Defaults to false.
@@ -268,10 +317,10 @@ type Result struct {
 }
 ```
 
-- `PasswordReconciler`
-- RBAC markers
+- `PasswordReconciler` with `client.Client`.
+- RBAC markers for autogeneration of rbac yaml.
 - Request just has a name.
-- Register to Manager.
+- Register `PasswordReconciler` to Manager.
 
 ## 5. [Controller] Fetch Password object
 
@@ -317,12 +366,16 @@ sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).Start.func2
         /Users/nakamasato/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.11.0/pkg/internal/controller/controller.go:227
 ```
 
-Commit: `git commit -am "1. [Controller] Fetch Password object"`
+Commit:
+```
+git commit -am "1. [Controller] Fetch Password object"
+```
+
 ## 6. [Controller] Create Secret object if not exists
 
 Logic:
-1. Try to fetch a Secret with the same name as Password object.
-1. Return if already exists. Otherwise, create a Secret.
+1. Try to fetch a `Secret` with the same name as `Password` object.
+1. Return if already exists. Otherwise, create a `Secret`.
 
 Secret: https://pkg.go.dev/k8s.io/api/core/v1#Secret
 
@@ -1317,3 +1370,7 @@ Checked version combinations:
 |---|-----|---|---|
 |[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.0)|
 |[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.1](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.1)|
+
+## References
+
+1. Groups, Kinds, Versions https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md & https://book.kubebuilder.io/cronjob-tutorial/gvks.html
