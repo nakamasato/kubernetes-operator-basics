@@ -254,7 +254,7 @@ kubectl get crd passwords.secret.example.com -o jsonpath='{.spec.versions[].sche
 }
 ```
 
-Commit:
+Commit
 ```
 git commit -am "[API] Remove Foo field from custom resource Password"
 ```
@@ -366,7 +366,8 @@ sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).Start.func2
         /Users/nakamasato/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.11.0/pkg/internal/controller/controller.go:227
 ```
 
-Commit:
+Commit
+
 ```
 git commit -am "1. [Controller] Fetch Password object"
 ```
@@ -529,7 +530,9 @@ The permission granted to the service account used by the controller-manager is 
 ```go
 //+kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch;create;
 ```
+
 Need to run `make manifests` to update `ClusterRole` for the controller.
+
 ```
 make manifests
 ```
@@ -567,7 +570,11 @@ make undeploy
 
 Next: Clean up the orphaned secret!
 
-Commit: `git add . && git commit -m "[Controller] Create Secret object if not exists"`
+Commit
+
+```
+git add . && git commit -m "[Controller] Create Secret object if not exists"
+```
 
 ## 7. [Controller] Clean up Secret when Password is deleted
 
@@ -584,7 +591,7 @@ Add the following lines to `Reconcile` function just after `secret := newSecretF
     }
 ```
 
-https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/controller/controllerutil#SetControllerReference
+[SetControllerReference](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.0/pkg/controller/controllerutil#SetControllerReference)
 
 > SetControllerReference sets owner as a Controller OwnerReference on controlled. This is used for **garbage collection of the controlled object** and for reconciling the owner object on changes to controlled (with a Watch + EnqueueRequestForOwner)
 
@@ -617,7 +624,10 @@ default-token-nppdh   kubernetes.io/service-account-token   3      26h
 
 Secret `password-sample` is deleted!
 
-Commit: `git commit -am "[Controller] Clean up Secret when Password is deleted"`
+Commit
+```
+git commit -am "[Controller] Clean up Secret when Password is deleted"
+```
 
 ## 8. [Controller] Generate random password
 
@@ -637,6 +647,7 @@ remove:
 - secret := newSecretFromPassword(&password)
 - err := ctrl.SetControllerReference(&password, secret, r.Scheme) // Set owner of this Secret
 ```
+
 new:
 ```go
     passwordStr, err := passwordGenerator.Generate(64, 10, 10, false, false)
@@ -666,7 +677,7 @@ func newSecretForPassword(password *secretv1alpha1.Password, passwordStr string)
 ```
 
 ```
-make install run
+make run
 ```
 
 ```
@@ -694,7 +705,11 @@ noY$Xa9KI3At(J+bwvLdqi4hDB/CT~ZxGfpR[7elWrS5Ocz=VMym)u#2F1_60jN8%
 
 Confirmed password is randomly generated.
 
-Commit: `git commit -am "[Controller] Generate random password"`
+Commit
+
+```
+git commit -am "[Controller] Generate random password"
+```
 
 ## 9. [API&Controller] Make password configurable with CRD fields
 
@@ -862,9 +877,13 @@ kubectl get secret password-sample -o jsonpath='{.data.password}'
 Error from server (NotFound): secrets "password-sample" not found
 ```
 
-Commit: `git commit -am "[API&Controller] Make password configurable with CRD fields"`
+Commit
 
-Let's improve our operator in the two ways:
+```
+git commit -am "[API&Controller] Make password configurable with CRD fields"
+```
+
+Next:
 - [ ] Update `Password`'s status to tell if custom resource is successfully updated.
 - [ ] Add validation for `digit`, `symbol`, and `length`: `number of digits and symbols must be less than total length`
 
@@ -972,7 +991,10 @@ kubectl get password password-sample -o jsonpath='{.status}'
 {"state":"Failed"}
 ```
 
-Commit: `git commit -am "[API&Controller] Add Password Status"`
+Commit
+```
+git commit -am "[API&Controller] Add Password Status"
+```
 
 Homework: Add `Reason` to `PasswordStatus` and store the failure reason for `Failed` state.
 1. Add new field to `PasswordStatus` (Go types).
@@ -1043,6 +1065,7 @@ password-sample   InSync
 ```
 
 Why `AGE` column is gone after setting `additionalPrinterColumns`? -> `AGE` is added if there's no `additionalPrinterColumn` specified: [apiserver/helpers.go#L81-L88](https://github.com/kubernetes/kubernetes/blob/e7a2ce75e5df96ba6ea51d904bf2735397b3e203/staging/src/k8s.io/apiextensions-apiserver/pkg/apiserver/helpers.go#L81-L88). If you want to get `AGE` back, you can add the following line:
+
 ```go
 //+kubebuilder:printcolumn:name="Age",type=date,JSONPath=`.metadata.creationTimestamp`
 ```
@@ -1064,24 +1087,34 @@ NAME              AGE   STATE
 password-sample   18m   InSync
 ```
 
-Commit: `git commit -am "[API] Add AdditionalPrinterColumns"`
+Commit
+
+```
+git commit -am "[API] Add AdditionalPrinterColumns"
+```
 
 ## 11. [kubebuilder] Create validating admission webhook
 
 In this section, we'll implement a validation for `digit`, `symbol`, and `length`: `number of digits and symbols must be less than total length`
 
+### 11.1. Admission Webhook in general
+
 Let's start with **Admission Webhook**.
 
 > Admission webhooks are HTTP callbacks that receive admission requests and do something with them.
 
-1. [validating admission webhook](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#validatingadmissionwebhook)
-1. [mutating admission webhook](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#mutatingadmissionwebhook)
+For more details, you can read the official documentation:
+
+1. [validating admission webhook](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#validatingadmissionwebhook):
+1. [mutating admission webhook](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#mutatingadmissionwebhook):
 
 Admission Controller: a piece of code that intercepts requests to the Kubernetes API server prior to persistence of the object, but after the request is authenticated and authorized.
 
-To validate our custom resource object, we'll use **Validating Admission Webhook**.
+![](https://raw.githubusercontent.com/nakamasato/kubernetes-training/main/contents/kubernetes-operator/admission-webhook.drawio.svg)
 
-`kubebuilder` will take care of all the following steps:
+### 11.2. Admission Webhook with kubebuilder
+
+`kubebuilder` makes it much simpler and easier to create a webhook by automating the following steps:
 1. Create a webhook with `kubebuilder` command.
 1. Add the webhook server to the manager.
 1. Create handlers for the webhook.
@@ -1128,11 +1161,14 @@ Global Flags:
 
 </details>
 
+### 11.3. Admission Webhook in our case
+To validate our custom resource object, we'll use **Validating Admission Webhook**.
+
 ```
 kubebuilder create webhook --group secret --version v1alpha1 --kind Password --programmatic-validation
 ```
 
-The command above automatically adds the following lines to `main.go`.
+The command above automatically adds the following lines to `main.go`, which adds the webhook server to the manager.
 
 ```diff
 +       if err = (&secretv1alpha1.Password{}).SetupWebhookWithManager(mgr); err != nil {
@@ -1142,14 +1178,14 @@ The command above automatically adds the following lines to `main.go`.
 ```
 
 Generated files:
-1. api: implementation of webhook
+1. `api`: implementation of webhook
     <details>
 
     1. `api/v1alpha1/password_webhook.go`: main logic of validating and defaulting.
     1. `api/v1alpha1/webhook_suite_test.go`: test for webhook
 
     </details>
-1. config:
+1. `config`:
     1. certmanager for certificate used by webhook
         <details>
 
@@ -1165,7 +1201,7 @@ Generated files:
         1. `config/default/webhookcainjection_patch.yaml`: Patch `MutatingWebhookConfiguration` and `ValidatingWebhookConfiguration` to add annotations.
 
         </details>
-    1. definition for webhook
+    1. definition of webhook
 
         <details>
 
@@ -1176,7 +1212,7 @@ Generated files:
 
         </details>
 
-1. `main.go`: Register webhook
+1. `main.go`: Register the webhook server to the manager.
 
 Let's start writing a validation logic in `api/v1alpha1/password_webhook.go`.
 
