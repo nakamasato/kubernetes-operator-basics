@@ -2,7 +2,7 @@
 
 ## Version
 
-[3.3.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.3.0)
+[3.4.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.0) or later
 
 ## Contents
 
