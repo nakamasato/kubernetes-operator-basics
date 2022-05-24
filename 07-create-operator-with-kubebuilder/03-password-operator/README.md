@@ -369,7 +369,7 @@ sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).Start.func2
 Commit
 
 ```
-git commit -am "1. [Controller] Fetch Password object"
+git commit -am "[Controller] Fetch Password object"
 ```
 
 ## 6. [Controller] Create Secret object if not exists
@@ -568,6 +568,10 @@ Now you can see a new secret is created by the operator!
 make undeploy
 ```
 
+```
+kubectl delete secret password-sample
+```
+
 Next: Clean up the orphaned secret!
 
 Commit
@@ -596,7 +600,7 @@ Add the following lines to `Reconcile` function just after `secret := newSecretF
 > SetControllerReference sets owner as a Controller OwnerReference on controlled. This is used for **garbage collection of the controlled object** and for reconciling the owner object on changes to controlled (with a Watch + EnqueueRequestForOwner)
 
 ```
-make run
+make install run
 ```
 
 ```
@@ -655,14 +659,14 @@ new:
         logger.Error(err, "Create Secret object if not exists - failed to generate password")
         return ctrl.Result{}, err
     }
-    secret := newSecretForPassword(&password, passwordStr)
+    secret := newSecretFromPassword(&password, passwordStr)
     err = ctrl.SetControllerReference(&password, secret, r.Scheme) // Set owner of this Secret
 ```
 
-Update `newSecretForPassword` to pass `passwordStr` as an argument:
+Update `newSecretFromPassword` to pass `passwordStr` as an argument:
 
 ```go
-func newSecretForPassword(password *secretv1alpha1.Password, passwordStr string) *corev1.Secret {
+func newSecretFromPassword(password *secretv1alpha1.Password, passwordStr string) *corev1.Secret {
 	secret := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      password.Name,
@@ -1229,7 +1233,11 @@ There are already four functions:
 1. `ValidateUpdate`: Validation logic for `UPDATE`
 1. `ValidateDelete`: Validation logic for `DELETE`
 
-Commit: `git add . && git commit -am "[kubebuilder] Create validating admission webhook"`
+Commit:
+
+```
+git add . && git commit -am "[kubebuilder] Create validating admission webhook"
+```
 
 ## 13. [API] Implement Validating Admission Webhook
 
