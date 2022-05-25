@@ -1,8 +1,12 @@
 # [Memcached Operator](https://sdk.operatorframework.io/docs/building-operators/golang/tutorial/)
 
 ## Versions
-- Go: go1.18.1
-- operator-sdk: v1.19.1
+- Go: go1.17.9
+- operator-sdk: v1.20.1
+
+## 0. memcached-operator overview
+
+![](memcached-operator.drawio.svg)
 
 ## 1. Initialize a project with `operator-sdk init`
 
