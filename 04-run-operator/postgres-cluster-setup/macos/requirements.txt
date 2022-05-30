@@ -1,0 +1,3 @@
+patroni
+python-etcd
+psycopg>=3.0
