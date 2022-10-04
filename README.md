@@ -13,8 +13,7 @@
 1. [Create Operator with kubebuilder](07-create-operator-with-kubebuilder)
 1. [Create Operator with operator-sdk](08-create-operator-with-operator-sdk)
 1. [Create Operator in Kubernetes way](09-create-operator-in-kubernetes-way)
-1. Operator Components
-1. Operator Development Tips
+1. [Operator Components](10-operator-components)
 
 ## CheatSheet
 
