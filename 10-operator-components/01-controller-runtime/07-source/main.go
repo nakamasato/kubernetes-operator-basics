@@ -4,13 +4,9 @@ import (
 	"context"
 	"flag"
 
-	mysqlv1alpha1 "github.com/nakamasato/mysql-operator/api/v1alpha1"
 	"go.uber.org/zap/zapcore"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/meta"
-	"k8s.io/apimachinery/pkg/runtime"
-	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/util/workqueue"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -26,14 +22,8 @@ import (
 )
 
 var (
-	log    = logf.Log.WithName("source-examples")
-	scheme = runtime.NewScheme()
+	log = logf.Log.WithName("source-examples")
 )
-
-func init() {
-	utilruntime.Must(mysqlv1alpha1.AddToScheme(scheme))
-	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-}
 
 func main() {
 	// Prepare log
@@ -61,7 +51,7 @@ func main() {
 	}
 
 	// Create a Cache
-	cache, err := cache.New(cfg, cache.Options{Scheme: scheme, Mapper: mapper}) // &informerCache{InformersMap: im}, nil
+	cache, err := cache.New(cfg, cache.Options{Mapper: mapper}) // &informerCache{InformersMap: im}, nil
 	if err != nil {
 		log.Error(err, "")
 	}
@@ -71,9 +61,6 @@ func main() {
 	pod := &v1.Pod{}
 	cache.Get(ctx, client.ObjectKeyFromObject(pod), pod)
 
-	mysqluser := &mysqlv1alpha1.MySQLUser{}
-	cache.Get(ctx, client.ObjectKeyFromObject(mysqluser), mysqluser)
-
 	// Start Cache
 	go func() {
 		if err := cache.Start(ctx); err != nil { // func (m *InformersMap) Start(ctx context.Context) error {
@@ -82,7 +69,6 @@ func main() {
 	}()
 	log.Info("cache is started")
 
-	kindWithCacheMysqlUser := source.NewKindWithCache(mysqluser, cache)
 	kindWithCachePod := source.NewKindWithCache(pod, cache)
 
 	// Prepare queue and eventHandler
@@ -104,17 +90,11 @@ func main() {
 	}
 
 	// Start Source
-	if err := kindWithCacheMysqlUser.Start(ctx, eventHandler, queue); err != nil { // Get informer and set eventHandler
-		log.Error(err, "")
-	}
 	if err := kindWithCachePod.Start(ctx, eventHandler, queue); err != nil { // Get informer and set eventHandler
 		log.Error(err, "")
 	}
 
 	// Wait for cache
-	if err := kindWithCacheMysqlUser.WaitForSync(ctx); err != nil {
-		log.Error(err, "")
-	}
 	if err := kindWithCachePod.WaitForSync(ctx); err != nil {
 		log.Error(err, "")
 	}
