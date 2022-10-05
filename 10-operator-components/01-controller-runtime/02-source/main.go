@@ -6,13 +6,10 @@ import (
 
 	"go.uber.org/zap/zapcore"
 	v1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/meta"
-	"k8s.io/client-go/rest"
 	"k8s.io/client-go/util/workqueue"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/cache"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
@@ -21,9 +18,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
-var (
-	log = logf.Log.WithName("source-examples")
-)
+var log = logf.Log.WithName("source-examples")
 
 func main() {
 	// Prepare log
@@ -42,16 +37,8 @@ func main() {
 		log.Error(err, "")
 	}
 
-	// Set a mapper
-	mapper, err := func(c *rest.Config) (meta.RESTMapper, error) {
-		return apiutil.NewDynamicRESTMapper(c)
-	}(cfg)
-	if err != nil {
-		log.Error(err, "")
-	}
-
 	// Create a Cache
-	cache, err := cache.New(cfg, cache.Options{Mapper: mapper}) // &informerCache{InformersMap: im}, nil
+	cache, err := cache.New(cfg, cache.Options{}) // &informerCache{InformersMap: im}, nil
 	if err != nil {
 		log.Error(err, "")
 	}
@@ -69,11 +56,13 @@ func main() {
 	}()
 	log.Info("cache is started")
 
+	// Create a Kind (Source)
 	kindWithCachePod := source.NewKindWithCache(pod, cache)
 
-	// Prepare queue and eventHandler
+	// Create a Queue
 	queue := workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "test")
 
+	// Create an EventHandler
 	eventHandler := handler.Funcs{
 		CreateFunc: func(e event.CreateEvent, q workqueue.RateLimitingInterface) {
 			log.Info("CreateFunc is called", "object", e.Object.GetName())
@@ -89,17 +78,18 @@ func main() {
 		},
 	}
 
-	// Start Source
+	// Start Kind (Source)
 	if err := kindWithCachePod.Start(ctx, eventHandler, queue); err != nil { // Get informer and set eventHandler
 		log.Error(err, "")
 	}
 
-	// Wait for cache
+	// Wait for Cache
 	if err := kindWithCachePod.WaitForSync(ctx); err != nil {
 		log.Error(err, "")
 	}
 	log.Info("kindWithCache is ready")
 
+	// Get items from Queue
 	for {
 		item, shutdown := queue.Get()
 		if shutdown {

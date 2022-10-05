@@ -1,14 +1,91 @@
 # Source
 
-Component structure:
-![](diagram.drawio.svg)
-
-Dataflow:
 ![](dataflow.drawio.svg)
 
 ## Example
 
-1. Run the `kindWithCache`
+Overview:
+
+1. Monitor `Pod` change with `kindWithCache`.
+1. Write to `Queue` with `EventHandler`.
+1. Keep getting items from the `Queue` and print them.
+
+Codes:
+
+1. Create and start `Cache`
+    ```go
+	// Create a Cache
+	cache, err := cache.New(cfg, cache.Options{}) // &informerCache{InformersMap: im}, nil
+	if err != nil {
+		log.Error(err, "")
+	}
+	log.Info("cache is created")
+
+	ctx := context.Background()
+	pod := &v1.Pod{}
+	cache.Get(ctx, client.ObjectKeyFromObject(pod), pod)
+
+	// Start Cache
+	go func() {
+		if err := cache.Start(ctx); err != nil { // func (m *InformersMap) Start(ctx context.Context) error {
+			log.Error(err, "failed to start cache")
+		}
+	}()
+	log.Info("cache is started")
+    ```
+1. Create a `kindWithCache`
+    ```go
+    // Create a Kind (Source)
+	kindWithCachePod := source.NewKindWithCache(pod, cache)
+    ```
+1. Create a `Queue`
+    ```go
+	queue := workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "test")
+    ```
+1. Create an `EventHandler`
+    ```go
+	eventHandler := handler.Funcs{
+		CreateFunc: func(e event.CreateEvent, q workqueue.RateLimitingInterface) {
+			log.Info("CreateFunc is called", "object", e.Object.GetName())
+			queue.Add(WorkQueueItem{Event: "Create", Name: e.Object.GetName()})
+		},
+		UpdateFunc: func(e event.UpdateEvent, q workqueue.RateLimitingInterface) {
+			log.Info("UpdateFunc is called", "objectNew", e.ObjectNew.GetName(), "objectOld", e.ObjectOld.GetName())
+			queue.Add(WorkQueueItem{Event: "Update", Name: e.ObjectNew.GetName()})
+		},
+		DeleteFunc: func(e event.DeleteEvent, q workqueue.RateLimitingInterface) {
+			log.Info("DeleteFunc is called", "object", e.Object.GetName())
+			queue.Add(WorkQueueItem{Event: "Delete", Name: e.Object.GetName()})
+		},
+	}
+    ```
+1. Start `kindWithCache` (Source)
+    ```go
+	if err := kindWithCachePod.Start(ctx, eventHandler, queue); err != nil { // Get informer and set eventHandler
+		log.Error(err, "")
+	}
+    ```
+1. Wait for `Cache` synced
+    ```go
+	if err := kindWithCachePod.WaitForSync(ctx); err != nil {
+		log.Error(err, "")
+	}
+	log.Info("kindWithCache is ready")
+    ```
+1. Get item from `Queue` and print
+    ```go
+	// Get items from Queue
+	for {
+		item, shutdown := queue.Get()
+		if shutdown {
+			break
+		}
+		log.Info("got item", "item", item)
+	}
+    ```
+## Run
+
+1. Run
     ```
     go run main.go
     ```
