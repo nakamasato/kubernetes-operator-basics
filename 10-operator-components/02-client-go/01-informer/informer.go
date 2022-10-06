@@ -2,12 +2,10 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"path/filepath"
 	"time"
 
-	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
@@ -25,23 +23,29 @@ func main() {
 		defaultKubeConfigPath = filepath.Join(home, ".kube", "config")
 	}
 
-	// set kubeconfig flag
+	// Set kubeconfig flag
 	kubeconfig := flag.String("kubeconfig", defaultKubeConfigPath, "kubeconfig config file")
 	flag.Parse()
 
+	// Get Config
 	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 	if err != nil {
 		log.Printf("Building config from flags, %s", err.Error())
 	}
 
+	// Create Clientset
 	kubeClient, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		log.Printf("getting kubernetes client set %s\n", err.Error())
 	}
 
+	// Create InformerFactory (defaultResync)
 	informerFactory := informers.NewSharedInformerFactory(kubeClient, time.Second*30)
 
+	// Create a PodInformer
 	podInformer := informerFactory.Core().V1().Pods()
+
+	// Create SharedIndexInformer and set EventHandler
 	podInformer.Informer().AddEventHandler(
 		cache.ResourceEventHandlerFuncs{
 			AddFunc:    handleAdd,
@@ -50,6 +54,7 @@ func main() {
 		},
 	)
 
+	// Start InformerFactory (start all the Informers in the Factory)
 	ch := make(chan struct{})
 	informerFactory.Start(ch)
 
@@ -69,12 +74,6 @@ func run() {
 
 func handleAdd(obj interface{}) {
 	key := getKeyFromObj(obj)
-	if pod, ok := obj.(*v1.Pod); !ok {
-		fmt.Println("couldn't convert to pod")
-	} else {
-		pod.SetLabels(map[string]string{"test": "test"}) // modify the object to trigger MutationDetector
-		fmt.Printf("converted to Pod label: %s\n", pod.GetLabels())
-	}
 	log.Printf(eventHandlerMessage, "handleAdd", key)
 }
 

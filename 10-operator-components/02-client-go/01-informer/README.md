@@ -184,10 +184,10 @@ type sharedIndexInformer struct {
 }
 ```
 Components:
-- [Indexer](../indexer)
+- Indexer
 - controller: explained below
 - sharedProcessor: explained below
-- [LiserWatcher](../listerwatcher/)
+- LiserWatcher
 
 
 [sharedIndexInformer.Run](https://github.com/kubernetes/client-go/blob/v0.25.0/tools/cache/shared_informer.go#L397-L444):
