@@ -25,15 +25,15 @@ type Child struct {
 }
 
 func main() {
-    p := Parent{Id: 1, Name: "John"}
-    printObjectName(&p)
-    ch := Child{Parent: p}
-    printObjectName(&ch)
+	p := Parent{Id: 1, Name: "John"}
+	printObjectName(&p)
+	ch := Child{Parent: p}
+	printObjectName(&ch)
 
-    ch = Child{Parent{Id: 1, Name: "child"}, "Other"}
-    printObjectName(&ch)
+	ch = Child{Parent{Id: 1, Name: "child"}, "Other"}
+	printObjectName(&ch)
 }
 
 func printObjectName(obj Object) {
-    fmt.Println(obj.GetName())
+	fmt.Println(obj.GetName())
 }

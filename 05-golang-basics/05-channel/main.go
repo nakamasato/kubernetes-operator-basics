@@ -6,22 +6,22 @@ import (
 )
 
 func main() {
-    waitCh := make(chan int)
+	waitCh := make(chan int)
 
-    go process(waitCh)
+	go process(waitCh)
 
-    fmt.Println("waiting")
+	fmt.Println("waiting")
 
-    <-waitCh // receive a message (wait until process is completed)
+	<-waitCh // receive a message (wait until process is completed)
 
-    fmt.Println("finished")
+	fmt.Println("finished")
 }
 
 func process(ch chan int) {
-    fmt.Println("process start")
-    time.Sleep(1 * time.Second)
+	fmt.Println("process start")
+	time.Sleep(1 * time.Second)
 
-    ch <- 1 // send a message to the channel
+	ch <- 1 // send a message to the channel
 
-    fmt.Println("process finished") // this might not be visible as main() finishes earlier
+	fmt.Println("process finished") // this might not be visible as main() finishes earlier
 }
