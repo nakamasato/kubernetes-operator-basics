@@ -1,4 +1,4 @@
-module github.com/nakamasato/kubernetes-operator-basics/05-golang-basics/02-module
+module github.com/nakamasato/kubernetes-operator-basics/05-golang-basics/02-package-and-module
 
 go 1.19
 

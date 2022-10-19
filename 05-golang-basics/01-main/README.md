@@ -48,7 +48,7 @@ func main() {
 1. Run with compiled file:
 
     ```
-    go build
+    go build main.go
     ```
     ```
     ./main

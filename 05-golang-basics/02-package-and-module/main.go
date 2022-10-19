@@ -3,10 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
-
 	"github.com/google/go-github/v47/github"
-	"github.com/nakamasato/kubernetes-operator-basics/05-golang-basics/02-module/mypackage"
+	"github.com/nakamasato/kubernetes-operator-basics/05-golang-basics/02-package-and-module/mypackage"
+	"os"
 )
 
 func main() {

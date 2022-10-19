@@ -13,14 +13,14 @@ A ***module*** is a collection of related Go packages that are released together
 go mod init <module_name>
 ```
 
-1. If you want to use your module from other module. You can set `github.com/<github user/org nanme>/<github repo name>` to your module name.
+1. If you want to use your module from other module. You can set `github.com/<github user/org name>/<github repo name>` to your module name.
 1. This command will generate a go.mod file.
 
 Example:
 
 ```
-go mod init github.com/nakamasato/kubernetes-operator-basics/05-golang-basics/02-module
-go: creating new go.mod: module github.com/nakamasato/kubernetes-operator-basics/05-golang-basics/02-module
+go mod init github.com/nakamasato/kubernetes-operator-basics/05-golang-basics/02-package-and-module
+go: creating new go.mod: module github.com/nakamasato/kubernetes-operator-basics/05-golang-basics/02-package-and-module
 ```
 
 I specified the path to the current directory.
@@ -95,8 +95,15 @@ go 1.19
 1. Use it.
     ```go
     client := github.NewClient(nil)
-    // list all organizations for user "willnorris"
-    orgs, _, err := client.Organizations.List(context.Background(), "willnorris", nil)
+	// list all organizations for user "willnorris"
+	orgs, _, err := client.Organizations.List(context.Background(), "willnorris", nil)
+	if err != nil {
+		fmt.Println("Error")
+		os.Exit(1)
+	}
+	for i, org := range orgs {
+		fmt.Println(i, *org.Login)
+	}
     ```
 1. Run `go mod tidy`
     `go.mod` is updated:
