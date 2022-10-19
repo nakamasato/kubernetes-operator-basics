@@ -6,7 +6,10 @@ import (
 )
 
 func main() {
-	go process()
+	go func() {
+		time.Sleep(1 * time.Second) // heavy process
+		fmt.Println("goroutine completed")
+	}()
 	fmt.Println("next")
 	time.Sleep(2 * time.Second)
 }

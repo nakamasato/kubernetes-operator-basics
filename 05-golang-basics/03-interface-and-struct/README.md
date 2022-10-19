@@ -41,7 +41,7 @@
     Bob
     ```
 
-## 2. Embeding
+## 2. Embedding
 
 1. Embed `Parent` struct in `Child` struct.
 

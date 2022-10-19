@@ -35,5 +35,5 @@ func main() {
 }
 
 func printObjectName(obj Object) {
-	fmt.Println(obj.GetName())
+    fmt.Println(obj.GetName())
 }

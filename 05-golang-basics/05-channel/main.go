@@ -2,13 +2,26 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 func main() {
-	ch := make(chan int) // Create a channel with type
+    waitCh := make(chan int)
 
-	go func() { ch <- 3 }() // Send a message to the channel
-	go func() { ch <- 5 }() // Send a message to the channel
+    go process(waitCh)
 
-	fmt.Println(<-ch, <-ch) // Receive messages and print them
+    fmt.Println("waiting")
+
+    <-waitCh // receive a message (wait until process is completed)
+
+    fmt.Println("finished")
+}
+
+func process(ch chan int) {
+    fmt.Println("process start")
+    time.Sleep(1 * time.Second)
+
+    ch <- 1 // send a message to the channel
+
+    fmt.Println("process finished") // this might not be visible as main() finishes earlier
 }
