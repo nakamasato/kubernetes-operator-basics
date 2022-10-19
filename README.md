@@ -8,7 +8,7 @@
 1. Operator Basics
 1. [Environment Setup](03-environment-setup)
 1. [Run Operator](04-run-operator)
-1. Golang Basics
+1. [Golang Basics](05-golang-basics)
 1. [Operator Development Method](06-operator-development-method)
 1. [Create Operator with kubebuilder](07-create-operator-with-kubebuilder)
 1. [Create Operator with operator-sdk](08-create-operator-with-operator-sdk)
