@@ -141,4 +141,3 @@ In this example, `MemcachedReconciler` has all the methods of [client.Client](ht
 1. [Type switches](https://go.dev/tour/methods/16)
 1. [Stringers](https://go.dev/tour/methods/17)
 1. [Exercise: Stringers](https://go.dev/tour/methods/18)
-

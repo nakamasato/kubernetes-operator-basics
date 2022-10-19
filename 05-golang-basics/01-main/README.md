@@ -103,4 +103,3 @@ For more details, https://pkg.go.dev/cmd/go
 1. https://go.dev/tour/methods/6
 1. https://go.dev/tour/methods/7
 1. https://go.dev/tour/methods/8
-
