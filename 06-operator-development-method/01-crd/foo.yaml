@@ -1,0 +1,6 @@
+apiVersion: example.com/v1alpha1
+kind: Foo
+metadata:
+  name: test
+testString: "first foo"
+testNum: 1
