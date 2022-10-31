@@ -134,21 +134,33 @@ go 1.19
 
 ## Practice
 1. Packages, variables, and functions.
-    1. https://go.dev/tour/basics/1
-    1. https://go.dev/tour/basics/2
-    1. https://go.dev/tour/basics/3
-    1. https://go.dev/tour/basics/4
-    1. https://go.dev/tour/basics/5
-    1. https://go.dev/tour/basics/6
-    1. https://go.dev/tour/basics/7
-    1. https://go.dev/tour/basics/8
-    1. https://go.dev/tour/basics/9
-    1. https://go.dev/tour/basics/10
-    1. https://go.dev/tour/basics/11
-    1. https://go.dev/tour/basics/12
-    1. https://go.dev/tour/basics/13
-    1. https://go.dev/tour/basics/14
-    1. https://go.dev/tour/basics/15
-    1. https://go.dev/tour/basics/16
+    1. [Packages](https://go.dev/tour/basics/1)
+    1. [Imports](https://go.dev/tour/basics/2)
+    1. [Exported names](https://go.dev/tour/basics/3)
+    1. [Functions](https://go.dev/tour/basics/4)
+    1. [Functions continued](https://go.dev/tour/basics/5)n
+    1. [Multiple results](https://go.dev/tour/basics/6)
+    1. [Named return values](https://go.dev/tour/basics/7)
+    1. [Variables](https://go.dev/tour/basics/8)
+    1. [Variables with initializers](https://go.dev/tour/basics/9)
+    1. [Short variable declarations](https://go.dev/tour/basics/10)
+    1. [Basic types](https://go.dev/tour/basics/11)
+    1. [Zero values](https://go.dev/tour/basics/12)
+    1. [Type conversions](https://go.dev/tour/basics/13)
+    1. [Type inference](https://go.dev/tour/basics/14)
+    1. [Constants](https://go.dev/tour/basics/15)
+    1. [Numeric Constants](https://go.dev/tour/basics/16)
 1. Flow control statements: for, if, else, switch and defer
-    1. https://go.dev/tour/flowcontrol/1
+    1. [For](https://go.dev/tour/flowcontrol/1)
+    1. [For continued](https://go.dev/tour/flowcontrol/2)
+    1. [For is Go's "while"](https://go.dev/tour/flowcontrol/3)
+    1. [Forever](https://go.dev/tour/flowcontrol/4)
+    1. [If](https://go.dev/tour/flowcontrol/5)
+    1. [If with a short statement](https://go.dev/tour/flowcontrol/6)
+    1. [If and else](https://go.dev/tour/flowcontrol/7)
+    1. [Exercise: Loops and Functions](https://go.dev/tour/flowcontrol/8)
+    1. [Switch](https://go.dev/tour/flowcontrol/9)
+    1. [Switch evaluation order](https://go.dev/tour/flowcontrol/10)
+    1. [Switch with no condition](https://go.dev/tour/flowcontrol/11)
+    1. [Defer](https://go.dev/tour/flowcontrol/12)
+    1. [Stacking defers](https://go.dev/tour/flowcontrol/13)
