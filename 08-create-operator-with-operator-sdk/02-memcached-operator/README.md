@@ -294,9 +294,9 @@ git add . && git commit -m "3. [API] Define API Memcached"
     ```
 
 1. Check
-    1. Run the controller.
+    1. Install CRD and run the controller.
         ```bash
-        make run
+        make install run
         ```
     1. Apply a `Memcached` (CR).
         ```bash
@@ -441,9 +441,9 @@ git add . && git commit -m "4.1. [Controller] Fetch the Memcached instance"
     ```
 
 1. Check
-    1. Install CRD and run the controller.
+    1. Run the controller.
         ```bash
-        make install run
+        make run
         ```
     1. Apply a `Memcached` (CR).
         ```bash
