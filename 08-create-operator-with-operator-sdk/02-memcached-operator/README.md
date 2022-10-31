@@ -809,7 +809,7 @@ git commit -am "4.4. [Controller] Update the Memcached status with the pod names
             Expect(err).NotTo(HaveOccurred())
     ```
 
-### 5.4. Test Warm-Up
+### 5.3. Test Warm-Up
 
 Create `controllers/memcached_controller_test.go`
 
@@ -834,7 +834,7 @@ Run test
 make test
 ```
 
-### 5.3. Test Case 1: When Memcached is created, Deployment should be created
+### 5.4. Test Case 1: When Memcached is created, Deployment should be created
 
 Write a test case in `controllers/memcached_controller_test.go`
 
@@ -865,7 +865,7 @@ var _ = Describe("MemcachedController", func() {
 })
 ```
 
-### 5.4. Test Case 2: When `Memcached`'s `size` is updated, `Deployment`'s `replicas` should be updated
+### 5.5. Test Case 2: When `Memcached`'s `size` is updated, `Deployment`'s `replicas` should be updated
 
 ```go
 var _ = Describe("MemcachedController", func() {
@@ -938,7 +938,9 @@ All tests pass.
 git add . && git commit -m "5. [Test] Write controller tests"
 ```
 
-### 5.5. Test Case 3: When `Deployment` is deleted, `Deployment` should be recreated
+codes: [controllers/memcached_controller_test.go](https://github.com/nakamasato/memcached-operator/blob/main/controllers/memcached_controller_test.go)
+
+### 5.6. Test Case 3: When `Deployment` is deleted, `Deployment` should be recreated
 
 Please try to write by yourself.
 Steps:
