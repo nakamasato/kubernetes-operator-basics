@@ -58,11 +58,11 @@ func main() {
 ## Function
 
 ```go
-func greet(language string) string {
-    if (language == "Spanish") {
-        return "Ola"
-    }
-    return "Hello"
+func greet(language, name string) (string, error) {
+	if language == "Spanish" {
+		return fmt.Sprintf("Ola, %s", name), nil
+	}
+	return fmt.Sprintf("Hello, %s", name), nil
 }
 ```
 
@@ -95,11 +95,11 @@ func main() {
 For more details, https://pkg.go.dev/cmd/go
 
 ## Practices
-1. https://go.dev/tour/methods/1
-1. https://go.dev/tour/methods/2
-1. https://go.dev/tour/methods/3
-1. https://go.dev/tour/methods/4
-1. https://go.dev/tour/methods/5
-1. https://go.dev/tour/methods/6
-1. https://go.dev/tour/methods/7
-1. https://go.dev/tour/methods/8
+1. [Methods](https://go.dev/tour/methods/1)
+1. [Methods are functions](https://go.dev/tour/methods/2)
+1. [Methods continued](https://go.dev/tour/methods/3)
+1. [Pointer receivers](https://go.dev/tour/methods/4)
+1. [Pointers and functions](https://go.dev/tour/methods/5)
+1. [Methods and pointer indirection](https://go.dev/tour/methods/6)
+1. [Methods and pointer indirection (2)](https://go.dev/tour/methods/7)
+1. [Choosing a value or pointer receiver](https://go.dev/tour/methods/8)
