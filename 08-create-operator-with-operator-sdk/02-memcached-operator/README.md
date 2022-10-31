@@ -4,6 +4,10 @@
 - Go: go1.17.9
 - operator-sdk: v1.21.0
 
+## Code
+
+You can check complete codes in https://github.com/nakamasato/memcached-operator.
+
 ## 0. memcached-operator overview
 
 1. When custom resource `Memcached` is created, the controller creates a `Deployment` if it doesn't exist.
