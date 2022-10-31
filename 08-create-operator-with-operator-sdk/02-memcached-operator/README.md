@@ -2,7 +2,7 @@
 
 ## Versions
 - Go: go1.17.9
-- operator-sdk: v1.20.1
+- operator-sdk: v1.21.0
 
 ## 0. memcached-operator overview
 
@@ -281,14 +281,14 @@ git add . && git commit -m "3. [API] Define API Memcached"
         err := r.Get(ctx, req.NamespacedName, memcached)
         if err != nil {
             if errors.IsNotFound(err) {
-                log.Info("1. Fetch the Memcached instance. Memcached resource not found.     Ignoring since object must be deleted")
+                log.Info("1. Fetch the Memcached instance. Memcached resource not found. Ignoring since object must be deleted")
                 return ctrl.Result{}, nil
             }
             // Error reading the object - requeue the request.
             log.Error(err, "1. Fetch the Memcached instance. Failed to get Mmecached")
             return ctrl.Result{}, err
         }
-        log.Info("1. Fetch the Memcached instance. Memchached resource found", "memcached.Name",     memcached.Name, "memcached.Namespace", memcached.Namespace)
+        log.Info("1. Fetch the Memcached instance. Memchached resource found", "memcached.Name", memcached.Name, "memcached.Namespace", memcached.Namespace)
         return ctrl.Result{}, nil
     }
     ```
@@ -355,8 +355,8 @@ git add . && git commit -m "4.1. [Controller] Fetch the Memcached instance"
                     log.Error(err, "2. Check if the deployment already exists, if not create a new one. Failed to create new Deployment", "Deployment.Namespace", dep.Namespace, "Deployment.Name", dep.Name)
                     return ctrl.Result{}, err
             }
-            // Deployment created successfully - return and requeue
-            return ctrl.Result{Requeue: true}, nil
+            // Deployment created successfully
+            return ctrl.Result{}, nil
     } else if err != nil {
             log.Error(err, "2. Check if the deployment already exists, if not create a new one. Failed to get Deployment")
             return ctrl.Result{}, err
@@ -428,24 +428,12 @@ git add . && git commit -m "4.1. [Controller] Fetch the Memcached instance"
     + //+kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
     ```
 
-1. Add `Owns(&appsv1.Deployment{})` to the controller manager.
-
-    ```go
-    // SetupWithManager sets up the controller with the Manager.
-    func (r *MemcachedReconciler) SetupWithManager(mgr ctrl.Manager) error {
-        return ctrl.NewControllerManagedBy(mgr).
-            For(&cachev1alpha1.Memcached{}).
-            Owns(&appsv1.Deployment{}).
-            Complete(r)
-    }
-    ```
-
 1. Check
     1. Run the controller.
         ```bash
         make run
         ```
-    1. Apply a `Memcached` (CR).
+    1. Change `spec.size` to 3 and apply a `Memcached` (CR).
         ```bash
         kubectl apply -f config/samples/cache_v1alpha1_memcached.yaml
         ```
@@ -464,12 +452,10 @@ git add . && git commit -m "4.1. [Controller] Fetch the Memcached instance"
         2021-12-10T12:34:48.363+0900    INFO    controller.memcached    1. Fetch the Memcached instance. Memchached resource found      {"reconciler group": "cache.example.com", "reconciler kind": "Memcached", "name": "memcached-sample", "namespace": "default", "memcached.Name": "memcached-sample", "memcached.Namespace": "default"}
         ```
 
-        There are ten lines of logs:
+        Logs:
         1. When `Memcached` object is created.
-        1. Create `Deployment`.
-        1. When `Deployment` is created.
-        1. 8 more events are created accordingly.
-
+        1. Create `Deployment`
+        1. Memcached resource found. (no need to create `Deployment` as it already exists)
 
     1. Check `Deployment`.
 
@@ -479,6 +465,14 @@ git add . && git commit -m "4.1. [Controller] Fetch the Memcached instance"
         memcached-sample   3/3     3            3           19s
         ```
 
+    1. Change `Deployment`'s replicas to 2 manually.
+
+        ```
+        kubectl patch deploy memcached-sample -p '{"spec":{"replicas": 2}}'
+        ```
+
+        Now `Memcached.Spec.Size` is different from `Deployment.Spec.Replicas`. -> Fix in next section.
+
     1. Delete the CR.
         ```bash
         kubectl delete -f config/samples/cache_v1alpha1_memcached.yaml
@@ -486,8 +480,8 @@ git add . && git commit -m "4.1. [Controller] Fetch the Memcached instance"
 
     1. Check logs.
         ```bash
-        2021-12-10T12:38:50.473+0900    INFO    controller.memcached 1. Fetch the Memcached instance. Memcached resource not found. Ignoring since object must be deleted      {"reconciler group": "cache.example.com", "reconciler kind": "Memcached", "name": "memcached-sample", "namespace": "default"}
-        2021-12-10T12:38:50.512+0900    INFO    controller.memcached 1. Fetch the Memcached instance. Memcached resource not found. Ignoring since object must be deleted      {"reconciler group": "cache.example.com", "reconciler kind": "Memcached", "name": "memcached-sample", "namespace": "default"}
+        1.65394828262848e+09    INFO    controller.memcached    1. Fetch the Memcached instance. Memcached resource not found. Ignoring since object must be deleted {"reconciler group": "cache.example.com", "reconciler kind": "Memcached", "name": "memcached-sample", "namespace": "default"}
+        1.653948282750252e+09   INFO    controller.memcached    1. Fetch the Memcached instance. Memcached resource not found. Ignoring since object must be deleted {"reconciler group": "cache.example.com", "reconciler kind": "Memcached", "name": "memcached-sample", "namespace": "default"}
         ```
     1. Check `Deployment`.
         ```
@@ -503,6 +497,40 @@ git add . && git commit -m "4.2. [Controller] Check if the deployment already ex
 
 ### 4.3. [Controller] Ensure the deployment size is the same as the spec
 
+1. Add `Owns(&appsv1.Deployment{})` to the controller manager.
+
+    ```go
+    // SetupWithManager sets up the controller with the Manager.
+    func (r *MemcachedReconciler) SetupWithManager(mgr ctrl.Manager) error {
+        return ctrl.NewControllerManagedBy(mgr).
+            For(&cachev1alpha1.Memcached{}).
+            Owns(&appsv1.Deployment{}).
+            Complete(r)
+    }
+    ```
+
+    ![](memcached-operator-owns.drawio.svg)
+
+    - [For](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/builder#Builder.For): primary resource to monitor -> `Reconcile` will be called for `Create/Update/Delete` of the resource.
+    - [Owns](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/builder#Builder.Owns): secondary resource to monitor. -> `Reconcile` will be called for `Create/Update/Delete` for **the owner** (`Memcached` in this example) of the secondary resource (`Deployment` in this example).
+    - for more details: [builder (controller-runtime)](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/builder).
+
+    Check:
+
+    ```
+    make run
+    ```
+
+    ```
+    kubectl apply -f config/samples/cache_v1alpha1_memcached.yaml
+    ```
+
+    ```
+    kubectl patch deploy memcached-sample -p '{"spec":{"replicas": 2}}'
+    ```
+
+    You can check `Reconcile` is called.
+
 1. Add the following lines to `Reconcile` function.
 
     ```go
@@ -517,9 +545,10 @@ git add . && git commit -m "4.2. [Controller] Check if the deployment already ex
             }
             // Spec updated - return and requeue
             log.Info("3. Ensure the deployment size is the same as the spec. Update deployment size", "Deployment.Spec.Replicas", size)
-            return ctrl.Result{Requeue: true}, nil
+            return ctrl.Result{}, nil
     }
     ```
+
 1. Check
     1. Run the controller.
         ```bash
@@ -703,8 +732,8 @@ git commit -am "4.4. [Controller] Update the Memcached status with the pod names
 ### 5.1. Tools
 
 1. [envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest): provides libraries for integration testing by starting a local control plane. (`etcd` and `kube-apiserver`)
-1. [Ginkgo](https://pkg.go.dev/github.com/onsi/ginkgo): BDD framework.
-1. [Gomega](https://pkg.go.dev/github.com/onsi/gomega): Matcher library for testing.
+1. [Ginkgo](https://pkg.go.dev/github.com/onsi/ginkgo): a BDD-style testing framework for Golang.
+1. [Gomega](https://pkg.go.dev/github.com/onsi/gomega): the Ginkgo BDD-style testing framework's preferred matcher library.
 ### 5.2. Prepare `suite_test.go`
 
 1. Import necessary packages.
@@ -762,7 +791,7 @@ git commit -am "4.4. [Controller] Update the Memcached status with the pod names
         go func() {
             defer GinkgoRecover()
             err = k8sManager.Start(ctx)
-            Expect(err).ToNot(HaveOccurred(), "failed to run ger")
+            Expect(err).ToNot(HaveOccurred(), "failed to run manager")
         }()
     ```
 
@@ -776,19 +805,144 @@ git commit -am "4.4. [Controller] Update the Memcached status with the pod names
             Expect(err).NotTo(HaveOccurred())
     ```
 
-### 5.3. Write tests
+### 5.4. Test Warm-Up
 
-Test cases in `controllers/memcached_controller_test.go`:
+Create `controllers/memcached_controller_test.go`
 
-1. When `Memcached` is created
-    1. `Deployment` should be created.
-    1. `Memcached`'s nodes have pods' names.
-1. When `Memcached`'s `size` is updated
-    1. `Deployment`'s `replicas` should be updated.
-    1. `Memcached`'s nodes have new pods' names.
-1. When `Deployment` is updated
-    1. Deleting `Deployment` -> `Deployment` is recreated.
-    1. Updating `Deployment` with `replicas = 0` -> `Deployment`'s replicas is updated to the original number.
+```go
+package controllers
+
+import (
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+)
+
+var _ = Describe("MemcachedController", func() {
+	It("Should be true", func() {
+		Expect(true).To(BeTrue())
+	})
+})
+```
+
+Run test
+
+```
+make test
+```
+
+### 5.3. Test Case 1: When Memcached is created, Deployment should be created
+
+Write a test case in `controllers/memcached_controller_test.go`
+
+Set constant variables.
+
+```go
+const (
+	memcachedApiVersion = "cache.example.com/v1alphav1"
+	memcachedKind       = "Memcached"
+	memcachedName       = "memcached-sample"
+	memcachedNamespace  = "default"
+	timeout             = time.Second * 10
+	interval            = time.Millisecond * 250
+)
+```
+
+```go
+var _ = Describe("MemcachedController", func() {
+    Context("When Memcached is created", func(){
+	    It("Deployment should be created", func() {
+            // Create Memcached
+
+            // Get Deployment by the memcached's name and namespace
+
+            // Expect error to be nil
+    	})
+    })
+})
+```
+
+### 5.4. Test Case 2: When `Memcached`'s `size` is updated, `Deployment`'s `replicas` should be updated
+
+```go
+var _ = Describe("MemcachedController", func() {
+    Context("When Memcached's size is updated", func(){
+	    It("Deployment's replica should be updated", func() {
+            // Create Memcached with size 3
+
+            // Update Memcached's size with 2
+
+            // Get Deployment by the memcached's name and namespace
+
+            // Expect replicas to be 2
+    	})
+    })
+})
+```
+
+```
+make test
+```
+
+You'll get an error `memcacheds.cache.example.com "memcached-sample" already exists`
+
+<details><summary>image</summary>
+
+![](test-failure.png)
+
+</details>
+
+Let's add a logic to clean up `Memcached` and `Deployment` before each test case.
+
+```go
+	BeforeEach(func() {
+		// Clean up Memcached
+		memcached := &cachev1alpha1.Memcached{}
+		err := k8sClient.Get(ctx,
+			types.NamespacedName{
+				Name:      memcachedName,
+				Namespace: memcachedNamespace,
+			},
+			memcached,
+		)
+		if err == nil {
+			err := k8sClient.Delete(ctx, memcached)
+			Expect(err).NotTo(HaveOccurred())
+		}
+		// Clean up Deployment
+		deployment := &appsv1.Deployment{}
+		err = k8sClient.Get(ctx,
+			types.NamespacedName{
+				Name:      memcachedName,
+				Namespace: memcachedNamespace,
+			},
+			deployment,
+		)
+		if err == nil {
+			err := k8sClient.Delete(ctx, deployment)
+			Expect(err).NotTo(HaveOccurred())
+		}
+	})
+```
+
+```
+make test
+```
+
+All tests pass.
+
+```
+git add . && git commit -m "5. [Test] Write controller tests"
+```
+
+### 5.5. Test Case 3: When `Deployment` is deleted, `Deployment` should be recreated
+
+Please try to write by yourself.
+Steps:
+
+1. Create `Memcached`.
+1. Check `Deployment` is created.
+1. Delete `Deployment`.
+1. Check `Deployment` is recreated.
 
 <details><summary>memcached_controller_test.go</summary>
 
@@ -1027,40 +1181,400 @@ func newPod(name string) *v1.Pod {
 
 </details>
 
-### 5.4. Run the tests
-
-```
-make test
-```
-
-<details>
-
-```
-/Users/nakamasato/repos/nakamasato/memcached-operator/bin/controller-gen rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
-/Users/nakamasato/repos/nakamasato/memcached-operator/bin/controller-gen object:headerFile="hack/boilerplate.go.txt" paths="./..."
-go fmt ./...
-go vet ./...
-GOBIN=/Users/nakamasato/repos/nakamasato/memcached-operator/bin go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
-KUBEBUILDER_ASSETS="/Users/nakamasato/Library/Application Support/io.kubebuilder.envtest/k8s/1.23.3-darwin-amd64" go test ./... -coverprofile cover.out
-?       github.com/example/memcached-operator   [no test files]
-?       github.com/example/memcached-operator/api/v1alpha1      [no test files]
-ok      github.com/example/memcached-operator/controllers       18.284s coverage: 79.3% of statements
-```
-
-</details>
-
 ## 6. Deployment
 
 ### 6.1. Deploy with Deployment
 
-```bash
-export IMG=memcached-operator:deploy
-make docker-build IMG=$IMG
-kind load docker-image $IMG # only necessary when deploying to kind cluster
-make deploy
-```
+1. (prerequisite) Prepare Docker image registry. (e.g. https://hub.docker.com/r/nakamasato/memcached-operator)
 
-### 6.2. Deploy with OLM
+1. Build Docker image and push it to registry.
+
+    ```bash
+    export IMG="<image registry name>:v0.0.1" # e.g. nakamasato/memcached-operator:v0.0.1
+    make docker-build docker-push IMG=$IMG
+    ```
+
+1. Deploy memcached-operator.
+
+    ```
+    make deploy IMG=$IMG
+    ```
+
+1. Create custom resource.
+
+    ```
+    kubectl apply -f config/samples/cache_v1alpha1_memcached.yaml
+    ```
+
+    Check controller's log:
+
+    ```
+    kubectl logs $(kubectl get po -n memcached-operator-system | grep memcached-operator-controller-manager | awk '{print $1}') -c manager -n memcached-operator-system -f
+    ```
+
+    Check Deployment:
+
+    ```
+    kubectl get deploy
+    ```
+
+1. Delete custom resource.
+
+    ```
+    kubectl delete -f config/samples/cache_v1alpha1_memcached.yaml
+    ```
+
+1. Uninstall memcached-operator.
+
+    ```
+    make undeploy
+    ```
+
+### 6.2. Deploy with Operator Lifecycle Manager (OLM)
+
+#### Operators
+
+Interestingly, OLM itself also consists of two Kubernetes operators:
+1. **OLM Operator**: Watches for ClusterServiceVersion (CSVs) in a namespace and checks that requirements are met. If so, runs the install strategy for the CSV.
+1. **Catalog Operator**: resolving and installing CSVs and the required resources they specify.
+
+#### Custom Resources
+
+OLM manages operator lifecycle with the following custom resources:
+- [ClusterServiceVersion](https://olm.operatorframework.io/docs/concepts/crds/clusterserviceversion/): a particular version of a running operator on a cluster: a template for the operator `Deployment`
+
+    - metadata: display name, maintainers, version,...
+    - operator scope: installModes
+    - installation: strategy, spec (permission, clusterPermission, deployments)
+    - customresourcedefinitions
+
+    <details><summary>example</summary>
+
+    ```yaml
+    apiVersion: operators.coreos.com/v1alpha1
+    kind: ClusterServiceVersion
+    metadata:
+      annotations:
+      name: memcached-operator.v0.10.0
+    spec:
+      # metadata
+      description: This is an operator for memcached.
+      displayName: Memcached Operator
+      keywords:
+      - memcached
+      - app
+      maintainers:
+      - email: corp@example.com
+        name: Some Corp
+      maturity: alpha
+      provider:
+        name: Example
+        url: www.example.com
+      version: 0.10.0
+      minKubeVersion: 1.16.0
+
+      # operator scope
+      installModes:
+      - supported: true
+        type: OwnNamespace
+      - supported: true
+        type: SingleNamespace
+      - supported: false
+        type: MultiNamespace
+      - supported: true
+        type: AllNamespaces
+
+      # installation
+      install:
+        # strategy indicates what type of deployment artifacts are used
+        strategy: deployment
+        # spec for the deployment strategy is a list of deployment specs and required permissions - similar to a pod template used in a deployment
+        spec:
+          permissions:
+          - serviceAccountName: memcached-operator
+            rules:
+            - apiGroups:
+              - ""
+              resources:
+              - pods
+              verbs:
+              - '*'
+              # the rest of the rules
+          # permissions required at the cluster scope
+          clusterPermissions:
+          - serviceAccountName: memcached-operator
+            rules:
+            - apiGroups:
+              - ""
+              resources:
+              - serviceaccounts
+              verbs:
+              - '*'
+              # the rest of the rules
+          deployments:
+          - name: memcached-operator
+            spec:
+              replicas: 1
+              # the rest of a deployment spec
+
+      # apis provided by the operator
+      customresourcedefinitions:
+        owned:
+        # a list of CRDs that this operator owns
+        # name is the metadata.name of the CRD (which is of the form <plural>.<group>)
+        - name: memcacheds.cache.example.com
+          # version is the spec.versions[].name value defined in the CRD
+          version: v1alpha1
+          # kind is the CamelCased singular value defined in spec.names.kind of the CRD.
+          kind: Memcached
+        required:
+        # a list of CRDs that this operator requires
+        # see field descriptions above
+        - name: others.example.com
+          version: v1alpha1
+          kind: Other
+    ```
+
+    </details>
+- [OperatorGroup](https://olm.operatorframework.io/docs/concepts/crds/operatorgroup/): provide rudimentary multitenant configuration to OLM installed operators
+- [CatalogSource](https://olm.operatorframework.io/docs/concepts/crds/catalogsource/): a store of metadata that OLM can query to discover and install operators and their dependencies
+    - types
+        - `grpc` with `image` reference
+        - `grpc` with `address` field
+        - `internal` or `configmap`
+- [OperatorCondition](https://olm.operatorframework.io/docs/concepts/crds/operatorcondition/): communicatin between OLM and a managed operator.
+- [Subscription](https://olm.operatorframework.io/docs/concepts/crds/subscription/): an intention to install an operator, which relates an operator to a `CatalogSource`.
+    <details><summary>example</summary>
+
+    ```yaml
+    apiVersion: operators.coreos.com/v1alpha1
+    kind: Subscription
+    metadata:
+      name: my-operator
+      namespace: operators
+    spec:
+      channel: stable
+      name: my-operator
+      source: my-catalog # specify CatalogSource
+      sourceNamespace: operators
+    ```
+
+    </details>
+
+- [InstallPlan](https://olm.operatorframework.io/docs/concepts/crds/installplan/): Specifying which CSV to install
+
+#### Steps
+
+1. (prerequisite) Prepare Docker image registry. (e.g. https://hub.docker.com/r/nakamasato/memcached-operator) (same as above)
+
+1. Build Docker image and push it to registry. (same as above)
+
+    ```bash
+    export IMG="<image registry name>:v0.0.1" # e.g. nakamasato/memcached-operator:v0.0.1
+    make docker-build docker-push IMG=$IMG
+    ```
+
+1. Install OLM into your Kubernetes cluster.
+
+    ```
+    operator-sdk olm install
+    ```
+
+    <details><summary>Result</summary>
+
+    ```
+    INFO[0000] Fetching CRDs for version "latest"
+    INFO[0000] Fetching resources for resolved version "latest"
+    I0607 07:13:30.244273   59785 request.go:665] Waited for 1.041513494s due to client-side throttling, not priority and fairness, request: GET:https://127.0.0.1:55310/apis/node.k8s.io/v1beta1?timeout=32s
+    INFO[0010] Creating CRDs and resources
+    INFO[0010]   Creating CustomResourceDefinition "catalogsources.operators.coreos.com"
+    INFO[0010]   Creating CustomResourceDefinition "clusterserviceversions.operators.coreos.com"
+    INFO[0011]   Creating CustomResourceDefinition "installplans.operators.coreos.com"
+    INFO[0011]   Creating CustomResourceDefinition "olmconfigs.operators.coreos.com"
+    INFO[0011]   Creating CustomResourceDefinition "operatorconditions.operators.coreos.com"
+    INFO[0011]   Creating CustomResourceDefinition "operatorgroups.operators.coreos.com"
+    INFO[0011]   Creating CustomResourceDefinition "operators.operators.coreos.com"
+    INFO[0011]   Creating CustomResourceDefinition "subscriptions.operators.coreos.com"
+    INFO[0011]   Creating Namespace "olm"
+    INFO[0012]   Creating Namespace "operators"
+    INFO[0012]   Creating ServiceAccount "olm/olm-operator-serviceaccount"
+    INFO[0012]   Creating ClusterRole "system:controller:operator-lifecycle-manager"
+    INFO[0012]   Creating ClusterRoleBinding "olm-operator-binding-olm"
+    INFO[0012]   Creating OLMConfig "cluster"
+    INFO[0014]   Creating Deployment "olm/olm-operator"
+    INFO[0014]   Creating Deployment "olm/catalog-operator"
+    INFO[0014]   Creating ClusterRole "aggregate-olm-edit"
+    INFO[0014]   Creating ClusterRole "aggregate-olm-view"
+    INFO[0014]   Creating OperatorGroup "operators/global-operators"
+    INFO[0014]   Creating OperatorGroup "olm/olm-operators"
+    INFO[0014]   Creating ClusterServiceVersion "olm/packageserver"
+    INFO[0015]   Creating CatalogSource "olm/operatorhubio-catalog"
+    INFO[0015] Waiting for deployment/olm-operator rollout to complete
+    INFO[0015]   Waiting for Deployment "olm/olm-operator" to rollout: 0 of 1 updated replicas are available
+    INFO[0036]   Deployment "olm/olm-operator" successfully rolled out
+    INFO[0036] Waiting for deployment/catalog-operator rollout to complete
+    INFO[0036]   Waiting for Deployment "olm/catalog-operator" to rollout: 0 of 1 updated replicas are available
+    INFO[0037]   Deployment "olm/catalog-operator" successfully rolled out
+    INFO[0037] Waiting for deployment/packageserver rollout to complete
+    INFO[0037]   Waiting for Deployment "olm/packageserver" to rollout: 0 of 2 updated replicas are available
+    INFO[0056]   Deployment "olm/packageserver" successfully rolled out
+    INFO[0056] Successfully installed OLM version "latest"
+
+    NAME                                            NAMESPACE    KIND                        STATUS
+    catalogsources.operators.coreos.com                          CustomResourceDefinition    Installed
+    clusterserviceversions.operators.coreos.com                  CustomResourceDefinition    Installed
+    installplans.operators.coreos.com                            CustomResourceDefinition    Installed
+    olmconfigs.operators.coreos.com                              CustomResourceDefinition    Installed
+    operatorconditions.operators.coreos.com                      CustomResourceDefinition    Installed
+    operatorgroups.operators.coreos.com                          CustomResourceDefinition    Installed
+    operators.operators.coreos.com                               CustomResourceDefinition    Installed
+    subscriptions.operators.coreos.com                           CustomResourceDefinition    Installed
+    olm                                                          Namespace                   Installed
+    operators                                                    Namespace                   Installed
+    olm-operator-serviceaccount                     olm          ServiceAccount              Installed
+    system:controller:operator-lifecycle-manager                 ClusterRole                 Installed
+    olm-operator-binding-olm                                     ClusterRoleBinding          Installed
+    cluster                                                      OLMConfig                   Installed
+    olm-operator                                    olm          Deployment                  Installed
+    catalog-operator                                olm          Deployment                  Installed
+    aggregate-olm-edit                                           ClusterRole                 Installed
+    aggregate-olm-view                                           ClusterRole                 Installed
+    global-operators                                operators    OperatorGroup               Installed
+    olm-operators                                   olm          OperatorGroup               Installed
+    packageserver                                   olm          ClusterServiceVersion       Installed
+    operatorhubio-catalog                           olm          CatalogSource               Installed
+    ```
+
+    </details>
+
+    Check:
+
+    ```
+    kubectl get po -n olm
+    NAME                                READY   STATUS    RESTARTS      AGE
+    catalog-operator-7bfdc86d78-ftsqp   1/1     Running   0             3m32s
+    olm-operator-745fb9c45-xn9jq        1/1     Running   0             3m32s
+    operatorhubio-catalog-5spvd         1/1     Running   3 (50s ago)   3m1s
+    packageserver-b9659cb48-cmlfn       1/1     Running   0             2m59s
+    packageserver-b9659cb48-swpcm       1/1     Running   0             2m59s
+    ```
+
+    ```
+    operator-sdk olm status
+    ```
+
+1. Bundle your operator.
+
+    **Operator bundle** is a container image to store Kubernetes manifests and metadata associated with an operator.
+
+    Generate necessary files for bundle:
+
+    ```
+    make bundle IMG=$IMG
+    ```
+
+    1. Generate `ClusterServiceVersion` in config/manifests/bases/memcached-operator.clusterserviceversion.yaml
+    1. Update image in `config/manager/kustomization.yaml`
+    1. Generate `bundle.Dockerfile` and `bundle` files.
+        <details>
+
+        ```
+        bundle/
+        ├── manifests
+        │   ├── cache.example.com_memcacheds.yaml
+        │   ├── memcached-operator-controller-manager-metrics-service_v1_service.yaml
+        │   ├── memcached-operator-manager-config_v1_configmap.yaml
+        │   ├── memcached-operator-metrics-reader_rbac.authorization.k8s.io_v1_clusterrole.yaml
+        │   └── memcached-operator.clusterserviceversion.yaml
+        ├── metadata
+        │   └── annotations.yaml
+        └── tests
+            └── scorecard
+                └── config.yaml
+
+        4 directories, 7 files
+        ```
+
+        </details>
+
+
+    Create **another** docker image for bundle (deployment configuration) and push it to the registry. (e.g. [docker.io/nakamasato/memcached-operator-bundle](https://hub.docker.com/r/nakamasato/memcached-operator-bundle)):
+
+    ```
+    make bundle-build bundle-push BUNDLE_IMG=docker.io/nakamasato/memcached-operator-bundle:v0.0.1
+    ```
+
+1. Install `memcached-operator` with OLM.
+
+    ```
+    operator-sdk run bundle docker.io/nakamasato/memcached-operator-bundle:v0.0.1
+    ```
+
+    <details><summary>Result</summary>
+
+    ```
+    INFO[0025] Successfully created registry pod: docker-io-nakamasato-memcached-operator-bundle-v0-0-1
+    INFO[0025] Created CatalogSource: memcached-operator-catalog
+    INFO[0025] OperatorGroup "operator-sdk-og" created
+    INFO[0025] Created Subscription: memcached-operator-v0-0-1-sub
+    INFO[0033] Approved InstallPlan install-4lvt5 for the Subscription: memcached-operator-v0-0-1-sub
+    INFO[0033] Waiting for ClusterServiceVersion "default/memcached-operator.v0.0.1" to reach 'Succeeded' phase
+    INFO[0033]   Waiting for ClusterServiceVersion "default/memcached-operator.v0.0.1" to appear
+    INFO[0051]   Found ClusterServiceVersion "default/memcached-operator.v0.0.1" phase: Pending
+    INFO[0053]   Found ClusterServiceVersion "default/memcached-operator.v0.0.1" phase: Installing
+    INFO[0084]   Found ClusterServiceVersion "default/memcached-operator.v0.0.1" phase: Succeeded
+    INFO[0084] OLM has successfully installed "memcached-operator.v0.0.1"
+    ```
+
+    </details>
+
+    Check:
+
+    ```
+    kubectl get po
+    NAME                                                              READY   STATUS      RESTARTS   AGE
+    d71c67e797ef5c5fbbaed16811c5e6052504e58d7c9b2b6e9c19bee2699brks   0/1     Completed   0          112s
+    docker-io-nakamasato-memcached-operator-bundle-v0-0-1             1/1     Running     0          2m6s
+    memcached-operator-controller-manager-c9457868d-s7m2w             2/2     Running     0          78s
+    ```
+
+1. Create custom resource. (same as above)
+
+    ```
+    kubectl apply -f config/samples/cache_v1alpha1_memcached.yaml
+    ```
+
+    Check controller's log:
+
+    ```
+    kubectl logs $(kubectl get po -n memcached-operator-system | grep memcached-operator-controller-manager | awk '{print $1}') -c manager -n memcached-operator-system -f
+    ```
+
+    Check Deployment:
+
+    ```
+    kubectl get deploy
+    ```
+
+1. Delete custom resource. (same as above)
+
+    ```
+    kubectl delete -f config/samples/cache_v1alpha1_memcached.yaml
+    ```
+
+1. Uninstall `memcached-operator`
+
+    ```
+    operator-sdk cleanup memcached-operator
+    ```
+
+1. Uninstall OLM.
+
+    If you install manage your operators with OLM, no need to uninstall OLM.
+
+    ```
+    operator-sdk olm uninstall
+    ```
 
 ## Versions
 
