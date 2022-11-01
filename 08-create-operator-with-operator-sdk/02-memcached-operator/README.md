@@ -4,9 +4,21 @@
 - Go: go1.17.9
 - operator-sdk: v1.21.0
 
-## Code
+## Codes
 
-You can check complete codes in https://github.com/nakamasato/memcached-operator.
+You can check the codes created in the tutorial [here](https://github.com/nakamasato/memcached-operator/commits/udemy-record):
+
+- [1. [operator-sdk] Init project with operator-sdk init](https://github.com/nakamasato/memcached-operator/commit/268fc19615b8d3b23eb71d1460f5320ea9b644b7)
+- [2. [operator-sdk] Create API Memcached (Controller & Resource) with `…](https://github.com/nakamasato/memcached-operator/commit/f5e795820654f86eb4e1bbd4c73ae5230cf13c55)
+- [3. [API] Define API Memcached](https://github.com/nakamasato/memcached-operator/commit/4d1dc51672730d902e4aef18ba3b551a489b519e)
+- [4.1. [Controller] Fetch the Memcached instance](https://github.com/nakamasato/memcached-operator/commit/8ce6e67b28023c8a85300c1e2342272d39247979)
+- [4.2. [Controller] Check if the deployment already exists, and create …](https://github.com/nakamasato/memcached-operator/commit/21003bc4facdff09a5b2d2c86dfba5baae4a3517)
+- [4.3. [Controller] Ensure the deployment size is the same as the spec](https://github.com/nakamasato/memcached-operator/commit/7a4631368d9ce8f9acbc9d9c824255dd90e8a7f2)
+- [4.4. [Controller] Update the Memcached status with the pod names](https://github.com/nakamasato/memcached-operator/commit/ba13576865bd223e77d1ae5b341b4fce409f8241)
+- [5. [Test] Write controller tests](https://github.com/nakamasato/memcached-operator/commit/d9734bcbb4b7ae51e465662ee0bc565fd0c90c0b)
+- [6. Deploy with OLM](https://github.com/nakamasato/memcached-operator/commit/4a2045f55ec796eaef20ec6a8a0054bc661f9053)
+
+You can also check the latest codes in https://github.com/nakamasato/memcached-operator.
 
 ## 0. memcached-operator overview
 
@@ -1582,7 +1594,7 @@ OLM manages operator lifecycle with the following custom resources:
     operator-sdk olm uninstall
     ```
 
-## Versions
+## Checked Versions
 
 Checked version pairs:
 
