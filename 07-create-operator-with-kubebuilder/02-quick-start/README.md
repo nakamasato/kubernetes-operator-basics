@@ -336,6 +336,26 @@ With this command, controller-gen generates the following files:
     make install # internally just run `kustomize build config/crd | kubectl apply -f -`
     ```
 
+    <details><summary>error</summary>
+
+    If you encounter the following error:
+
+    ```
+    make install
+    /Users/m.naka/projects/guestbook/bin/controller-gen rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+    curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s -- 3.8.7 /Users/m.naka/projects/guestbook/bin
+    Version v3.8.7 does not exist or is not available for darwin/arm64.
+    make: *** [/Users/m.naka/projects/guestbook/bin/kustomize] Error 1
+    ```
+
+    You can specify kustomize version or you can update the default KUSTOMIZE_VERSION in Makefile.
+
+    ```
+    KUSTOMIZE_VERSION=4.5.5 make install
+    ```
+
+    </details>
+
 1. Run your controller in your local. (internally `go run main.go`)
     ```
     make run
