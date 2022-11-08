@@ -14,6 +14,8 @@ cd ~/projects/guestbook
 kubebuilder init --domain my.domain --repo my.domain/guestbook
 ```
 
+If you are using [kubebuilder#v3.7.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.7.0) on M1 Mac, you might need to use `kubebuilder init --domain my.domain --repo my.domain/guestbook --plugins=go/v4-alpha`. (ref: [create a project](https://book.kubebuilder.io/quick-start.html#create-a-project))
+
 <details><summary>Results</summary>
 
 ```
@@ -425,6 +427,26 @@ We use local run for development.
     make install
     ```
 
+    <details><summary>error</summary>
+
+    If you encounter the following error:
+
+    ```
+    make install
+    /Users/m.naka/projects/guestbook/bin/controller-gen rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+    curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s -- 3.8.7 /Users/m.naka/projects/guestbook/bin
+    Version v3.8.7 does not exist or is not available for darwin/arm64.
+    make: *** [/Users/m.naka/projects/guestbook/bin/kustomize] Error 1
+    ```
+
+    You can specify kustomize version or you can update the default KUSTOMIZE_VERSION in Makefile.
+
+    ```
+    KUSTOMIZE_VERSION=4.5.5 make install
+    ```
+
+    </details>
+
 1. Run the operator **on the Kubernetes cluster**.
     1. Set `IMG` variable.
         ```
@@ -452,6 +474,26 @@ We use local run for development.
         ```
         make deploy IMG=$IMG
         ```
+
+        <details><summary>error</summary>
+
+        If you encounter the following error:
+
+        ```
+        make install
+        /Users/m.naka/projects/guestbook/bin/controller-gen rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+        curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s -- 3.8.7 /Users/m.naka/projects/guestbook/bin
+        /Users/m.naka/projects/guestbook/bin/kustomize exists. Remove it first.
+        make: *** [/Users/m.naka/projects/guestbook/bin/kustomize] Error 1
+        ```
+
+        Delete the kustomize by `rm bin/kustomize` and rerun the command
+
+        ```
+        KUSTOMIZE_VERSION=4.5.5 make deploy IMG=$IMG
+        ```
+
+        </details>
 
     1. Check Pods in `guestbook-system` namespace.
         ```
@@ -508,3 +550,6 @@ Checked version pairs:
 |---|-----|---|---|
 |[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.3.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.3.0)|
 |[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.1](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.1)|
+|[4.8.0 (78933)](https://docs.docker.com/desktop/release-notes/#docker-desktop-480)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.24.0|[v3.5.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.5.0)|
+|[4.13.1 (90346)](https://docs.docker.com/desktop/release-notes/#docker-desktop-4131)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.6.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.6.0)|)
+|[4.13.1 (90346)](https://docs.docker.com/desktop/release-notes/#docker-desktop-4131)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.7.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.7.0)|)
