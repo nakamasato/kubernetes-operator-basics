@@ -934,7 +934,7 @@ Next:
 
 ## 10. [API&Controller] Add Password Status
 
-Update Go types:
+Update Go types: `api/v1alpha1/password_types.go`
 
 Create new type `PasswordState`
 
@@ -1138,11 +1138,11 @@ Commit
 git commit -am "[API] Add AdditionalPrinterColumns"
 ```
 
-## 11. [kubebuilder] Create validating admission webhook
+## 12. [kubebuilder] Create validating admission webhook
 
 In this section, we'll implement a validation for `digit`, `symbol`, and `length`: `number of digits and symbols must be less than total length`
 
-### 11.1. Admission Webhook in general
+### 12.1. Admission Webhook in general
 
 Let's start with **Admission Webhook**.
 
@@ -1157,7 +1157,7 @@ Admission Controller: a piece of code that intercepts requests to the Kubernetes
 
 ![](https://raw.githubusercontent.com/nakamasato/kubernetes-training/main/contents/kubernetes-operator/admission-webhook.drawio.svg)
 
-### 11.2. Admission Webhook with kubebuilder
+### 12.2. Admission Webhook with kubebuilder
 
 `kubebuilder` makes it much simpler and easier to create a webhook by automating the following steps:
 1. Create a webhook with `kubebuilder` command.
@@ -1206,7 +1206,7 @@ Global Flags:
 
 </details>
 
-### 11.3. Admission Webhook in our case
+### 12.3. Admission Webhook in our case
 To validate our custom resource object, we'll use **Validating Admission Webhook**.
 
 ```
