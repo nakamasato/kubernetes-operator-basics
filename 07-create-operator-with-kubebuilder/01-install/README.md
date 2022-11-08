@@ -13,6 +13,14 @@ kubebuilder version
 Version: main.version{KubeBuilderVersion:"3.3.0", KubernetesVendor:"1.23.1", GitCommit:"47859bf2ebf96a64db69a2f7074ffdec7f15c1ec", BuildDate:"2022-01-18T17:03:29Z", GoOs:"darwin", GoArch:"amd64"}
 ```
 
+If you want to specify a kubebuilder version, you can use the following command:
+
+```
+KUBEBUILDER_VERSION=v3.5.0
+curl -L -o kubebuilder https://github.com/kubernetes-sigs/kubebuilder/releases/download/$KUBEBUILDER_VERSION/kubebuilder_$(go env GOOS)_$(go env GOARCH)
+chmod +x kubebuilder && mv kubebuilder /usr/local/bin/
+```
+
 <details><summary>Check Commands</summary>
 
 ```

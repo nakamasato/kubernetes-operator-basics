@@ -130,6 +130,26 @@ Install CRD
 make install
 ```
 
+<details><summary>error</summary>
+
+If you encounter the following error:
+
+```
+make install
+/Users/m.naka/projects/guestbook/bin/controller-gen rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s -- 3.8.7 /Users/m.naka/projects/guestbook/bin
+Version v3.8.7 does not exist or is not available for darwin/arm64.
+make: *** [/Users/m.naka/projects/guestbook/bin/kustomize] Error 1
+```
+
+You can specify kustomize version or you can update the default KUSTOMIZE_VERSION in Makefile.
+
+```
+KUSTOMIZE_VERSION=4.5.5 make install
+```
+
+</details>
+
 Run
 ```
 make run
@@ -244,6 +264,27 @@ We also need to update the CRD registered in `api-server` as `Foo` is already re
 ```bash
 make install
 ```
+
+<details><summary>error</summary>
+
+If you encounter the following error:
+
+```
+make install
+/Users/m.naka/projects/guestbook/bin/controller-gen rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s -- 3.8.7 /Users/m.naka/projects/guestbook/bin
+Version v3.8.7 does not exist or is not available for darwin/arm64.
+make: *** [/Users/m.naka/projects/guestbook/bin/kustomize] Error 1
+```
+
+You can specify kustomize version or you can update the default KUSTOMIZE_VERSION in Makefile.
+
+```
+KUSTOMIZE_VERSION=4.5.5 make install
+```
+
+</details>
+
 Now you can confirm the field `Foo` is removed.
 
 ```bash
