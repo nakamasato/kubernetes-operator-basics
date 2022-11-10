@@ -6,6 +6,18 @@ In this tutorial, we'll learn the followings:
 1. Run the operator in your local
 1. Run the operator in a Kubernetes cluster
 
+## Versions
+
+Checked version pairs:
+
+|Docker|kind|kubernetes|kubebuilder|
+|---|-----|---|---|
+|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.3.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.3.0)|
+|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.1](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.1)|
+|[4.8.0 (78933)](https://docs.docker.com/desktop/release-notes/#docker-desktop-480)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.24.0|[v3.5.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.5.0)|
+|[4.13.1 (90346)](https://docs.docker.com/desktop/release-notes/#docker-desktop-4131)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.6.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.6.0)|)
+|[4.13.1 (90346)](https://docs.docker.com/desktop/release-notes/#docker-desktop-4131)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.7.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.7.0)|)
+
 ## 2.1. Start a project
 
 ```
@@ -542,14 +554,3 @@ We use local run for development.
 Cheatsheet:
 1. [kind](../../99-cheatsheet/kind)
 1. [kubebuilder](../../99-cheatsheet/kubebuilder): `kubebuilder` and `make` commands
-## Versions
-
-Checked version pairs:
-
-|Docker|kind|kubernetes|kubebuilder|
-|---|-----|---|---|
-|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.3.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.3.0)|
-|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.1](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.1)|
-|[4.8.0 (78933)](https://docs.docker.com/desktop/release-notes/#docker-desktop-480)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.24.0|[v3.5.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.5.0)|
-|[4.13.1 (90346)](https://docs.docker.com/desktop/release-notes/#docker-desktop-4131)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.6.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.6.0)|)
-|[4.13.1 (90346)](https://docs.docker.com/desktop/release-notes/#docker-desktop-4131)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.7.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.7.0)|)
