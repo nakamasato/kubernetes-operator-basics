@@ -130,6 +130,26 @@ Install CRD
 make install
 ```
 
+<details><summary>error</summary>
+
+If you encounter the following error:
+
+```
+make install
+/Users/m.naka/projects/guestbook/bin/controller-gen rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s -- 3.8.7 /Users/m.naka/projects/guestbook/bin
+Version v3.8.7 does not exist or is not available for darwin/arm64.
+make: *** [/Users/m.naka/projects/guestbook/bin/kustomize] Error 1
+```
+
+You can specify kustomize version or you can update the default KUSTOMIZE_VERSION in Makefile.
+
+```
+KUSTOMIZE_VERSION=4.5.5 make install
+```
+
+</details>
+
 Run
 ```
 make run
@@ -244,6 +264,27 @@ We also need to update the CRD registered in `api-server` as `Foo` is already re
 ```bash
 make install
 ```
+
+<details><summary>error</summary>
+
+If you encounter the following error:
+
+```
+make install
+/Users/m.naka/projects/guestbook/bin/controller-gen rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s -- 3.8.7 /Users/m.naka/projects/guestbook/bin
+Version v3.8.7 does not exist or is not available for darwin/arm64.
+make: *** [/Users/m.naka/projects/guestbook/bin/kustomize] Error 1
+```
+
+You can specify kustomize version or you can update the default KUSTOMIZE_VERSION in Makefile.
+
+```
+KUSTOMIZE_VERSION=4.5.5 make install
+```
+
+</details>
+
 Now you can confirm the field `Foo` is removed.
 
 ```bash
@@ -893,7 +934,7 @@ Next:
 
 ## 10. [API&Controller] Add Password Status
 
-Update Go types:
+Update Go types: `api/v1alpha1/password_types.go`
 
 Create new type `PasswordState`
 
@@ -1097,11 +1138,11 @@ Commit
 git commit -am "[API] Add AdditionalPrinterColumns"
 ```
 
-## 11. [kubebuilder] Create validating admission webhook
+## 12. [kubebuilder] Create validating admission webhook
 
 In this section, we'll implement a validation for `digit`, `symbol`, and `length`: `number of digits and symbols must be less than total length`
 
-### 11.1. Admission Webhook in general
+### 12.1. Admission Webhook in general
 
 Let's start with **Admission Webhook**.
 
@@ -1116,7 +1157,7 @@ Admission Controller: a piece of code that intercepts requests to the Kubernetes
 
 ![](https://raw.githubusercontent.com/nakamasato/kubernetes-training/main/contents/kubernetes-operator/admission-webhook.drawio.svg)
 
-### 11.2. Admission Webhook with kubebuilder
+### 12.2. Admission Webhook with kubebuilder
 
 `kubebuilder` makes it much simpler and easier to create a webhook by automating the following steps:
 1. Create a webhook with `kubebuilder` command.
@@ -1165,7 +1206,7 @@ Global Flags:
 
 </details>
 
-### 11.3. Admission Webhook in our case
+### 12.3. Admission Webhook in our case
 To validate our custom resource object, we'll use **Validating Admission Webhook**.
 
 ```
@@ -1269,13 +1310,21 @@ func (r *Password) ValidateDelete() error {
 var ErrSumOfDigitAndSymbolMustBeLessThanLength = errors.New("Number of digits and symbols must be less than total length")
 
 func (r *Password) validatePassword() error {
-	if r.Spec.Digit+r.Spec.Symbol >= r.Spec.Length {
+	if r.Spec.Digit+r.Spec.Symbol > r.Spec.Length {
 		return ErrSumOfDigitAndSymbolMustBeLessThanLength
 	}
 	return nil
 }
 ```
 
+Import `"errors"`.
+
+```go
+import (
+  "errors"
+  ...
+)
+```
 
 Run! (We need to run the controller with cert manager because webhook requires TLS)
 
@@ -1410,10 +1459,13 @@ Commit: `git add . && git commit -am "[API] Implement validating admission webho
 
 Checked version combinations:
 
-|Docker|kind|kubernetes|kubebuilder|
-|---|-----|---|---|
-|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.0)|
-|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.1](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.1)|
+|Docker Engine|Go|kind|kubernetes|kubebuilder|cert manager|password-operator (code)|
+|---|---|---|---|---|---|---|
+|[20.10.14](https://docs.docker.com/engine/release-notes/#201014)|1.17.9|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|-|
+|[20.10.14](https://docs.docker.com/engine/release-notes/#201014)|1.17.9|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.1](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.1)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v0.0.1](https://github.com/nakamasato/password-operator/releases/tag/v0.0.1)|
+|[20.10.20](https://docs.docker.com/engine/release-notes/#201020)|1.18|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.5.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.5.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v0.0.2](https://github.com/nakamasato/password-operator/releases/tag/v0.0.2)|
+|[20.10.20](https://docs.docker.com/engine/release-notes/#201020)|1.18|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.6.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.6.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v0.0.3](https://github.com/nakamasato/password-operator/releases/tag/v0.0.3)|
+|[20.10.20](https://docs.docker.com/engine/release-notes/#201020)|1.19|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.7.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.7.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v0.0.4](https://github.com/nakamasato/password-operator/releases/tag/v0.0.4)|
 
 ## References
 
