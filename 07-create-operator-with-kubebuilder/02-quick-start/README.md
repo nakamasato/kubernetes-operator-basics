@@ -14,6 +14,8 @@ cd ~/projects/guestbook
 kubebuilder init --domain my.domain --repo my.domain/guestbook
 ```
 
+If you are using [kubebuilder#v3.7.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.7.0) on M1 Mac, you might need to use `kubebuilder init --domain my.domain --repo my.domain/guestbook --plugins=go/v4-alpha`. (ref: [create a project](https://book.kubebuilder.io/quick-start.html#create-a-project))
+
 <details><summary>Results</summary>
 
 ```
@@ -549,3 +551,5 @@ Checked version pairs:
 |[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.3.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.3.0)|
 |[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.1](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.1)|
 |[4.8.0 (78933)](https://docs.docker.com/desktop/release-notes/#docker-desktop-480)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.24.0|[v3.5.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.5.0)|
+|[4.13.1 (90346)](https://docs.docker.com/desktop/release-notes/#docker-desktop-4131)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.6.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.6.0)|)
+|[4.13.1 (90346)](https://docs.docker.com/desktop/release-notes/#docker-desktop-4131)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.7.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.7.0)|)
