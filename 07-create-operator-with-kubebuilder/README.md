@@ -4,6 +4,11 @@
 
 [3.4.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.0) or later
 
+You can check the tested versions in each example:
+
+1. [QuickStart#Versions](02-quick-start/README.md#versions)
+1. [PasswordOperator#Versions](03-password-operator/README.md#versions)
+
 ## Contents
 
 1. [Install kubebuilder](01-install)
