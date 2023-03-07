@@ -449,7 +449,23 @@ git add . && git commit -m "4.1. [Controller] Fetch the Memcached instance"
         ```bash
         make run
         ```
-    1. Change `spec.size` to 3 and apply a `Memcached` (CR).
+    1. Change `spec.size` in `config/samples/cache_v1alpha1_memcached.yaml` to 3 and apply a `Memcached` (CR).
+
+    	```yaml
+	apiVersion: cache.example.com/v1alpha1
+	kind: Memcached
+	metadata:
+	  labels:
+	    app.kubernetes.io/name: memcached
+	    app.kubernetes.io/instance: memcached-sample
+	    app.kubernetes.io/part-of: memcached-operator
+	    app.kubernetes.io/managed-by: kustomize
+	    app.kubernetes.io/created-by: memcached-operator
+	  name: memcached-sample
+	spec:
+	  size: 2
+	```
+
         ```bash
         kubectl apply -f config/samples/cache_v1alpha1_memcached.yaml
         ```
@@ -829,7 +845,7 @@ Create `controllers/memcached_controller_test.go`
 package controllers
 
 import (
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
