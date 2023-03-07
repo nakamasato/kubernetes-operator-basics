@@ -463,7 +463,7 @@ git add . && git commit -m "4.1. [Controller] Fetch the Memcached instance"
             app.kubernetes.io/created-by: memcached-operator
           name: memcached-sample
         spec:
-          size: 2
+          size: 3
 	```
 
         ```bash
