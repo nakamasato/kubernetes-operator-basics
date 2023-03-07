@@ -776,7 +776,7 @@ git commit -am "4.4. [Controller] Update the Memcached status with the pod names
             "testing"
     +       ctrl "sigs.k8s.io/controller-runtime"
     +
-            . "github.com/onsi/ginkgo"
+            . "github.com/onsi/ginkgo/v2"
             . "github.com/onsi/gomega"
             "k8s.io/client-go/kubernetes/scheme"
     -       "k8s.io/client-go/rest"
@@ -1617,5 +1617,11 @@ Checked version pairs:
 |Docker|kind|kubernetes|operator-sdk|
 |---|-----|---|---|
 |[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v1.19.1](https://github.com/operator-framework/operator-sdk/releases/tag/v1.19.1)|
-|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v1.20.1](https://github.com/operator-framework/operator-sdk/releases/tag/v1.21.0)|
+|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v1.20.1](https://github.com/operator-framework/operator-sdk/releases/tag/v1.20.1)|
 |[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v1.21.0](https://github.com/operator-framework/operator-sdk/releases/tag/v1.21.0)|
+|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v1.22.0](https://github.com/operator-framework/operator-sdk/releases/tag/v1.22.0)|
+|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.23.4|[v1.23.0](https://github.com/operator-framework/operator-sdk/releases/tag/v1.23.0)|
+|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v1.24.0](https://github.com/operator-framework/operator-sdk/releases/tag/v1.24.0)|
+|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v1.25.0](https://github.com/operator-framework/operator-sdk/releases/tag/v1.25.0)|
+|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v1.26.0](https://github.com/operator-framework/operator-sdk/releases/tag/v1.26.0)|
+|[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v1.27.0](https://github.com/operator-framework/operator-sdk/releases/tag/v1.27.0)|
