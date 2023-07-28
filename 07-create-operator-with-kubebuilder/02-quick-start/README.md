@@ -8,6 +8,8 @@ In this tutorial, we'll learn the followings:
 
 ## Versions
 
+This document is tested with [v3.10.0]()
+
 Checked version pairs:
 
 |Docker|kind|kubernetes|kubebuilder|
@@ -15,8 +17,10 @@ Checked version pairs:
 |[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.3.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.3.0)|
 |[4.7.0 (77141)](https://docs.docker.com/desktop/mac/release-notes/#docker-desktop-471)|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.1](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.1)|
 |[4.8.0 (78933)](https://docs.docker.com/desktop/release-notes/#docker-desktop-480)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.24.0|[v3.5.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.5.0)|
-|[4.13.1 (90346)](https://docs.docker.com/desktop/release-notes/#docker-desktop-4131)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.6.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.6.0)|)
-|[4.13.1 (90346)](https://docs.docker.com/desktop/release-notes/#docker-desktop-4131)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.7.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.7.0)|)
+|[4.13.1 (90346)](https://docs.docker.com/desktop/release-notes/#docker-desktop-4131)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.6.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.6.0)|
+|[4.13.1 (90346)](https://docs.docker.com/desktop/release-notes/#docker-desktop-4131)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.7.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.7.0)|
+|[4.13.1 (90346)](https://docs.docker.com/desktop/release-notes/#docker-desktop-4131)|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.10.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.10.0)|
+
 
 ## 2.1. Start a project
 
@@ -62,18 +66,19 @@ $ kubebuilder create api
 Check generated files
 
 ```
-tree .
 .
 ├── Dockerfile
 ├── Makefile
 ├── PROJECT
+├── README.md
+├── cmd
+│   └── main.go
 ├── config
 │   ├── default
 │   │   ├── kustomization.yaml
 │   │   ├── manager_auth_proxy_patch.yaml
 │   │   └── manager_config_patch.yaml
 │   ├── manager
-│   │   ├── controller_manager_config.yaml
 │   │   ├── kustomization.yaml
 │   │   └── manager.yaml
 │   ├── prometheus
@@ -91,17 +96,16 @@ tree .
 │       └── service_account.yaml
 ├── go.mod
 ├── go.sum
-├── hack
-│   └── boilerplate.go.txt
-└── main.go
+└── hack
+    └── boilerplate.go.txt
 
-6 directories, 24 files
+7 directories, 24 files
 ```
 
 1. Go
     1. go.mod
     1. go.sum
-    1. main.go
+    1. cmd/main.go
 1. Dockerfile
 1. Makefile
 1. config
@@ -312,7 +316,7 @@ Newly generated files:
     - `config/rbac/guestbook_viewer_role.yaml`: `ClusterRole`
     - `config/samples/`: Sample yaml for `Guestbook`
 - `api/`: Go types for the newly added custom resource `GuestBook`.
-- `controllers/`:
+- `internal/controller/` (before 3.10.0 it was `controllers/`):
     - `guestbook_controller.go`: controller for GuestBook
     - `suite_test.go`: Ginkgo test suite file.
 
@@ -384,14 +388,14 @@ With this command, controller-gen generates the following files:
     /Users/nakamasato/projects/guestbook/bin/controller-gen object:headerFile="hack/boilerplate.go.txt" paths="./..."
     go fmt ./...
     go vet ./...
-    go run ./main.go
-    1.6510153771436281e+09  INFO    controller-runtime.metrics      Metrics server is starting to listen    {"addr": ":8080"}
-    1.651015377144557e+09   INFO    setup   starting manager
-    1.651015377145022e+09   INFO    Starting server {"path": "/metrics", "kind": "metrics", "addr": "[::]:8080"}
-    1.651015377145098e+09   INFO    Starting server {"kind": "health probe", "addr": "[::]:8081"}
-    1.651015377145259e+09   INFO    controller.guestbook    Starting EventSource    {"reconciler group": "webapp.my.domain", "reconciler kind": "Guestbook", "source": "kind source: *v1.Guestbook"}
-    1.6510153771452842e+09  INFO    controller.guestbook    Starting Controller     {"reconciler group": "webapp.my.domain", "reconciler kind": "Guestbook"}
-    1.651015377459231e+09   INFO    controller.guestbook    Starting workers        {"reconciler group": "webapp.my.domain", "reconciler kind": "Guestbook", "worker count": 1}
+    go run ./cmd/main.go
+    2023-07-28T09:19:49+09:00       INFO    controller-runtime.metrics      Metrics server is starting to listen    {"addr": ":8080"}
+    2023-07-28T09:19:49+09:00       INFO    setup   starting manager
+    2023-07-28T09:19:49+09:00       INFO    Starting server {"path": "/metrics", "kind": "metrics", "addr": "[::]:8080"}
+    2023-07-28T09:19:49+09:00       INFO    Starting server {"kind": "health probe", "addr": "[::]:8081"}
+    2023-07-28T09:19:49+09:00       INFO    Starting EventSource    {"controller": "guestbook", "controllerGroup": "webapp.my.domain", "controllerKind": "Guestbook", "source": "kind source: *v1.Guestbook"}
+    2023-07-28T09:19:49+09:00       INFO    Starting Controller     {"controller": "guestbook", "controllerGroup": "webapp.my.domain", "controllerKind": "Guestbook"}
+    2023-07-28T09:19:49+09:00       INFO    Starting workers        {"controller": "guestbook", "controllerGroup": "webapp.my.domain", "controllerKind": "Guestbook", "worker count": 1}
     ```
 
     </details>
@@ -401,7 +405,7 @@ With this command, controller-gen generates the following files:
     (Note that we need to keep `make run` running when executing the following command.)
 
     ```
-    kubectl apply -f config/samples/
+    kubectl apply -k config/samples/
     ```
 
     Nothing happens at this point as we haven't implemented anything yet. We'll implement a logic to capture create, update, and delete operation of the custom resource later.
@@ -409,7 +413,7 @@ With this command, controller-gen generates the following files:
 1. Clean up the created insatnce.
 
     ```
-    kubectl delete -f config/samples/
+    kubectl delete -k config/samples/
     ```
 
 1. Stop `make run` by `ctrl-C`.
@@ -516,12 +520,12 @@ We use local run for development.
 
 1. Create an instance/object of the Custom Resource. (same as above)
     ```
-    kubectl apply -f config/samples/
+    kubectl apply -k config/samples/
     ```
 
 1. Delete the instance/object of the Custom Resource. (same as above)
     ```
-    kubectl delete -f config/samples/
+    kubectl delete -k config/samples/
     ```
 
 1. Stop the operator.
