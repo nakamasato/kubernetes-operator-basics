@@ -1,20 +1,23 @@
 # [PasswordOperator](https://github.com/nakamasato/password-operator/tree/v0.0.1)
 
 ## Versions
-- Go 1.17.9 or later
-- Kubebuilder: [v3.4.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.0) or later
+
+This document is confirmed with the following version pairs:
+- Go 1.19
+- Kubebuilder: [v3.10.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.10.0)
 
 Checked version combinations:
 
-|Docker Engine|Go|kind|kubernetes|kubebuilder|cert manager|password-operator (code)|
-|---|---|---|---|---|---|---|
-|[20.10.14](https://docs.docker.com/engine/release-notes/#201014)|1.17.9|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|-|
-|[20.10.14](https://docs.docker.com/engine/release-notes/#201014)|1.17.9|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.1](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.1)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v0.0.1](https://github.com/nakamasato/password-operator/releases/tag/v0.0.1)|
-|[20.10.20](https://docs.docker.com/engine/release-notes/#201020)|1.18|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.5.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.5.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v0.0.2](https://github.com/nakamasato/password-operator/releases/tag/v0.0.2)|
-|[20.10.20](https://docs.docker.com/engine/release-notes/#201020)|1.18|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.6.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.6.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v0.0.3](https://github.com/nakamasato/password-operator/releases/tag/v0.0.3)|
-|[20.10.20](https://docs.docker.com/engine/release-notes/#201020)|1.19|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.7.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.7.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v0.0.4](https://github.com/nakamasato/password-operator/releases/tag/v0.0.4)|
-|[20.10.20](https://docs.docker.com/engine/release-notes/#201020)|1.19|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.8.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.8.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v0.0.5](https://github.com/nakamasato/password-operator/releases/tag/v0.0.5)|
-|[20.10.20](https://docs.docker.com/engine/release-notes/#201020)|1.19|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.9.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.9.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v0.0.6](https://github.com/nakamasato/password-operator/releases/tag/v0.0.6)|
+|Docker Engine|Go|kind|kubernetes|kubebuilder|cert manager|kustomize|controller-tools|password-operator (code)|doc version|
+|---|---|---|---|---|---|---|---|---|---|
+|[20.10.14](https://docs.docker.com/engine/release-notes/#201014)|1.17.9|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|-|-|
+|[20.10.14](https://docs.docker.com/engine/release-notes/#201014)|1.17.9|[v0.12.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.12.0)|v1.23.4|[v3.4.1](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.4.1)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|-|[v0.8.0](https://github.com/kubernetes-sigs/controller-tools/releases/tag/v0.8.0)|[v0.0.1](https://github.com/nakamasato/password-operator/releases/tag/v0.0.1)|
+|[20.10.20](https://docs.docker.com/engine/release-notes/#201020)|1.18|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.5.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.5.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v4.5.5](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.5.5)|[v0.9.0](https://github.com/kubernetes-sigs/controller-tools/releases/tag/v0.9.0)|[v0.0.2](https://github.com/nakamasato/password-operator/releases/tag/v0.0.2)|[1.0.1](https://github.com/nakamasato/kubernetes-operator-basics/releases/tag/1.0.1)|
+|[20.10.20](https://docs.docker.com/engine/release-notes/#201020)|1.18|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.6.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.6.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v4.5.5](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.5.5)|[v0.9.2](https://github.com/kubernetes-sigs/controller-tools/releases/tag/v0.9.2)|[v0.0.3](https://github.com/nakamasato/password-operator/releases/tag/v0.0.3)|[1.0.1](https://github.com/nakamasato/kubernetes-operator-basics/releases/tag/1.0.1)|
+|[20.10.20](https://docs.docker.com/engine/release-notes/#201020)|1.19|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.7.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.7.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v4.5.5](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.5.5)|[v0.9.2](https://github.com/kubernetes-sigs/controller-tools/releases/tag/v0.9.2)|[v0.0.4](https://github.com/nakamasato/password-operator/releases/tag/v0.0.4)|[1.0.1](https://github.com/nakamasato/kubernetes-operator-basics/releases/tag/1.0.1)|
+|[20.10.20](https://docs.docker.com/engine/release-notes/#201020)|1.19|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.8.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.8.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v4.5.5](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.5.5)|[v0.10.0](https://github.com/kubernetes-sigs/controller-tools/releases/tag/v0.10.0)|[v0.0.5](https://github.com/nakamasato/password-operator/releases/tag/v0.0.5)|[1.0.2](https://github.com/nakamasato/kubernetes-operator-basics/releases/tag/1.0.2)|
+|[20.10.20](https://docs.docker.com/engine/release-notes/#201020)|1.19|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.9.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.9.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v4.5.5](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv4.5.5)|[v0.11.1](https://github.com/kubernetes-sigs/controller-tools/releases/tag/v0.11.1)|[v0.0.6](https://github.com/nakamasato/password-operator/releases/tag/v0.0.6)|[1.0.2](https://github.com/nakamasato/kubernetes-operator-basics/releases/tag/1.0.3)|
+|[ 24.0.2](https://docs.docker.com/engine/release-notes/24.0/#2402)|1.19|[v0.17.0](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)|v1.25.3|[v3.10.0](https://github.com/kubernetes-sigs/kubebuilder/releases/tag/v3.10.0)|[v1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0)|[v5.0.0](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.0.0)|[v0.12.0](https://github.com/kubernetes-sigs/controller-tools/releases/tag/v0.12.0)|[v0.0.7](https://github.com/nakamasato/password-operator/releases/tag/v0.0.7)|[1.0.3](https://github.com/nakamasato/kubernetes-operator-basics/releases/tag/1.0.2)|
 
 ## 0. Design Operator `PasswordOperator`
 
@@ -124,7 +127,7 @@ If you're aware of which kind of change you're making, it'll be helpful to under
 
 ## 3. [Controller] Add log in Reconcile function
 
-Update `controllers/password_controller.go`
+Update `internal/controller/password_controller.go` (before kubebuilder 3.10 `controllers/password_controller.go`)
 
 ```go
 func (r *PasswordReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -142,7 +145,7 @@ Install CRD
 make install
 ```
 
-<details><summary>error</summary>
+<details><summary>if error occurs</summary>
 
 If you encounter the following error:
 
@@ -170,26 +173,28 @@ make run
 Result:
 
 ```
-go run ./main.go
-1.651026659120943e+09   INFO    controller-runtime.metrics     Metrics server is starting to listen    {"addr": ":8080"}
-1.65102665912137e+09    INFO    setup   starting manager
-1.65102665912194e+09    INFO    Starting server {"path": "/metrics", "kind": "metrics", "addr": "[::]:8080"}
-1.65102665912202e+09    INFO    Starting server {"kind": "health probe", "addr": "[::]:8081"}
-1.651026659122195e+09   INFO    controller.password     Starting EventSource    {"reconciler group": "secret.example.com", "reconciler kind": "Password", "source": "kind source: *v1alpha1.Password"}
-1.65102665912222e+09    INFO    controller.password     Starting Controller     {"reconciler group": "secret.example.com", "reconciler kind": "Password"}
-1.6510266592234979e+09  INFO    controller.password     Starting workers        {"reconciler group": "secret.example.com", "reconciler kind": "Password", "worker count": 1}
+go fmt ./...
+go vet ./...
+go run ./cmd/main.go
+2023-07-28T07:17:32+09:00       INFO    controller-runtime.metrics      Metrics server is starting to listen    {"addr": ":8080"}
+2023-07-28T07:17:32+09:00       INFO    setup   starting manager
+2023-07-28T07:17:32+09:00       INFO    Starting server {"kind": "health probe", "addr": "[::]:8081"}
+2023-07-28T07:17:32+09:00       INFO    Starting server {"path": "/metrics", "kind": "metrics", "addr": "[::]:8080"}
+2023-07-28T07:17:32+09:00       INFO    Starting EventSource    {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password", "source": "kind source: *v1alpha1.Password"}
+2023-07-28T07:17:32+09:00       INFO    Starting Controller     {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password"}
+2023-07-28T07:17:32+09:00       INFO    Starting workers        {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password", "worker count": 1}
 ```
 
 Create `Password` object
 ```
-kubectl apply -f config/samples
+kubectl apply -k config/samples
 ```
 
 See logs
 
 Reconcile function is called with `Password` with name `password-sample`
 ```
-1.651026742035841e+09   INFO    controller.password     Reconcile is called.       {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
+2023-07-28T07:17:58+09:00       INFO    Reconcile is called.    {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password", "Password": {"name":"password-sample","namespace":"default"}, "namespace": "default", "name": "password-sample", "reconcileID": "f2e46175-e05f-4db7-b92b-080f1018dc9a"}
 ```
 
 Let's see the arguments of `Reconcile`: `Reconcile(ctx context.Context, req ctrl.Request)`
@@ -199,14 +204,14 @@ Let's see the arguments of `Reconcile`: `Reconcile(ctx context.Context, req ctrl
 
 Delete the object with
 ```
-kubectl delete -f config/samples
+kubectl delete -k config/samples
 ```
 
 See logs.
 Reconcile function is called with `Password` with name `password-sample`
 
 ```
-1.65102695302618e+09    INFO    controller.password     Reconcile is called.       {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
+2023-07-28T07:18:29+09:00       INFO    Reconcile is called.    {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password", "Password": {"name":"password-sample","namespace":"default"}, "namespace": "default", "name": "password-sample", "reconcileID": "d90e037e-48d8-49cb-a080-a19f88613ae1"}
 ```
 
 From the logs, the two events (creation and deletion) triggered the `Reconcile` function exactly the same way. We cannot distinguish them in `Reconcile`. (**Important**)
@@ -396,27 +401,29 @@ make run
 ```
 
 ```
-kubectl apply -f config/samples
+kubectl apply -k config/samples
 ```
 
 ```
-1.651098875458412e+09   INFO    controller.password     Fetch Password object - succeeded   {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "password": "password-sample", "createdAt": "2022-04-28 07:34:35 +0900 JST"}
+2023-07-28T07:22:48+09:00       INFO    Fetch Password object - succeeded       {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password", "Password": {"name":"password-sample","namespace":"default"}, "namespace": "default", "name": "password-sample", "reconcileID": "e21a347d-8092-43ac-8cd1-6da7092b4088", "password": "password-sample", "createdAt": "2023-07-28 07:22:48 +0900 JST"}
 ```
 
 ```
-kubectl delete -f config/samples
+kubectl delete -k config/samples
 ```
 
 ```
-1.651102065284576e+09   ERROR   controller.password     Fetch Password object - failed      {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "error": "Password.secret.example.com \"password-sample\" not found"}
+2023-07-28T07:23:26+09:00       ERROR   Fetch Password object - failed  {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password", "Password": {"name":"password-sample","namespace":"default"}, "namespace": "default", "name": "password-sample", "reconcileID": "0cbb4fa3-fe1d-4f35-942f-2386cf224185", "error": "Password.secret.example.com \"password-sample\" not found"}
+example.com/password-operator/internal/controller.(*PasswordReconciler).Reconcile
+        /Users/m.naka/projects/password-operator/internal/controller/password_controller.go:57
 sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).Reconcile
-        /Users/nakamasato/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.11.0/pkg/internal/controller/controller.go:114
+        /Users/m.naka/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.14.4/pkg/internal/controller/controller.go:122
 sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).reconcileHandler
-        /Users/nakamasato/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.11.0/pkg/internal/controller/controller.go:311
+        /Users/m.naka/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.14.4/pkg/internal/controller/controller.go:323
 sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).processNextWorkItem
-        /Users/nakamasato/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.11.0/pkg/internal/controller/controller.go:266
+        /Users/m.naka/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.14.4/pkg/internal/controller/controller.go:274
 sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).Start.func2.2
-        /Users/nakamasato/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.11.0/pkg/internal/controller/controller.go:227
+        /Users/m.naka/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.14.4/pkg/internal/controller/controller.go:235
 ```
 
 Commit
@@ -487,15 +494,15 @@ make run
 ```
 
 ```
-kubectl apply -f config/samples
+kubectl apply -k config/samples
 ```
 
 ```
-1.6511075442946272e+09  INFO    controller.password     Reconcile is called.    {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
-1.651107544294673e+09   INFO    controller.password     Fetch Password object - succeeded    {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "password": "password-sample", "createdAt": "2022-04-28 09:59:04 +0900 JST"}
-1.6511075444954848e+09  INFO    controller.password     Create Secret object if not exists - create secret       {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
-1.651107544582052e+09   INFO    controller.password     Create Secret object if not exists - Secret successfully created {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
-1.651107544582082e+09   INFO    controller.password     Create Secret object if not exists - completed   {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
+2023-07-28T07:25:29+09:00       INFO    Reconcile is called.    {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password", "Password": {"name":"password-sample","namespace":"default"}, "namespace": "default", "name": "password-sample", "reconcileID": "50383d60-6afa-4dd9-901e-d9732f6ce0a6"}
+2023-07-28T07:25:29+09:00       INFO    Fetch Password object - succeeded       {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password", "Password": {"name":"password-sample","namespace":"default"}, "namespace": "default", "name": "password-sample", "reconcileID": "50383d60-6afa-4dd9-901e-d9732f6ce0a6", "password": "password-sample", "createdAt": "2023-07-28 07:25:29 +0900 JST"}
+2023-07-28T07:25:29+09:00       INFO    Create Secret object if not exists - create secret      {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password", "Password": {"name":"password-sample","namespace":"default"}, "namespace": "default", "name": "password-sample", "reconcileID": "50383d60-6afa-4dd9-901e-d9732f6ce0a6"}
+2023-07-28T07:25:29+09:00       INFO    Create Secret object if not exists - Secret successfully created        {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password", "Password": {"name":"password-sample","namespace":"default"}, "namespace": "default", "name": "password-sample", "reconcileID": "50383d60-6afa-4dd9-901e-d9732f6ce0a6"}
+2023-07-28T07:25:29+09:00       INFO    Create Secret object if not exists - completed  {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password", "Password": {"name":"password-sample","namespace":"default"}, "namespace": "default", "name": "password-sample", "reconcileID": "50383d60-6afa-4dd9-901e-d9732f6ce0a6"}
 ```
 
 ```
@@ -512,20 +519,22 @@ echo -n MTIzNDU2Nzg5 | base64 --decode
 ```
 
 ```
-kubectl delete -f config/samples
+kubectl delete -k config/samples
 ```
 
 ```
-1.651107652362049e+09   INFO    controller.password     Reconcile is called.    {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default"}
-1.651107652362087e+09   ERROR   controller.password     Fetch Password object - failed       {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "error": "Password.secret.example.com \"password-sample\" not found"}
+2023-07-28T07:26:29+09:00       INFO    Reconcile is called.    {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password", "Password": {"name":"password-sample","namespace":"default"}, "namespace": "default", "name": "password-sample", "reconcileID": "891e164d-11ab-4d25-8f1c-f23d7257e973"}
+2023-07-28T07:26:29+09:00       ERROR   Fetch Password object - failed  {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password", "Password": {"name":"password-sample","namespace":"default"}, "namespace": "default", "name": "password-sample", "reconcileID": "891e164d-11ab-4d25-8f1c-f23d7257e973", "error": "Password.secret.example.com \"password-sample\" not found"}
+example.com/password-operator/internal/controller.(*PasswordReconciler).Reconcile
+        /Users/m.naka/projects/password-operator/internal/controller/password_controller.go:60
 sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).Reconcile
-        /Users/nakamasato/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.11.0/pkg/internal/controller/controller.go:114
+        /Users/m.naka/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.14.4/pkg/internal/controller/controller.go:122
 sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).reconcileHandler
-        /Users/nakamasato/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.11.0/pkg/internal/controller/controller.go:311
+        /Users/m.naka/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.14.4/pkg/internal/controller/controller.go:323
 sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).processNextWorkItem
-        /Users/nakamasato/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.11.0/pkg/internal/controller/controller.go:266
+        /Users/m.naka/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.14.4/pkg/internal/controller/controller.go:274
 sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller).Start.func2.2
-        /Users/nakamasato/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.11.0/pkg/internal/controller/controller.go:227
+        /Users/m.naka/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.14.4/pkg/internal/controller/controller.go:235
 ```
 
 ```
@@ -559,21 +568,21 @@ Check pod
 ```
 kubectl get po -n password-operator-system
 NAME                                                    READY   STATUS    RESTARTS   AGE
-password-operator-controller-manager-796b9d99b6-x7qnn   2/2     Running   0          24s
+password-operator-controller-manager-5648556967-jxpkx   2/2     Running   0          11s
 ```
 
 Check logs
 
 ```
-kubectl logs password-operator-controller-manager-796b9d99b6-x7qnn -n password-operator-system -f
+kubectl logs password-operator-controller-manager-5648556967-jxpkx -n password-operator-system -f
 ```
 
 ```
-kubectl apply -f config/samples
+kubectl apply -k config/samples
 ```
 
 ```
-E0428 01:52:38.175924       1 reflector.go:138] pkg/mod/k8s.io/client-go@v0.23.0/tools/cache/reflector.go:167: Failed to watch *v1.Secret: failed to list *v1.Secret: secrets is forbidden: User "system:serviceaccount:password-operator-system:password-operator-controller-manager" cannot list resource "secrets" in API group "" at the cluster scope
+W0727 22:29:56.838445       1 reflector.go:424] pkg/mod/k8s.io/client-go@v0.26.1/tools/cache/reflector.go:169: failed to list *v1.Secret: secrets is forbidden: User "system:serviceaccount:password-operator-system:password-operator-controller-manager" cannot list resource "secrets" in API group "" at the cluster scope
 ```
 
 The permission granted to the service account used by the controller-manager is not enough!
@@ -610,9 +619,8 @@ make deploy IMG=$IMG
 
 ```
 kubectl get secret
-NAME                  TYPE                                  DATA   AGE
-default-token-nppdh   kubernetes.io/service-account-token   3      26h
-password-sample       Opaque                                1      11s
+NAME              TYPE     DATA   AGE
+password-sample   Opaque   1      17s
 ```
 
 Now you can see a new secret is created by the operator!
@@ -657,26 +665,25 @@ make install run
 ```
 
 ```
-kubectl apply -f config/samples
+kubectl apply -k config/samples
 ```
 
 ```
 kubectl get secret
-NAME                  TYPE                                  DATA   AGE
-default-token-nppdh   kubernetes.io/service-account-token   3      26h
-password-sample       Opaque                                1      24s
+
+NAME              TYPE     DATA   AGE
+password-sample   Opaque   1      6s
 ```
 
 ```
-kubectl delete -f config/samples
+kubectl delete -k config/samples
 ```
 
 Check Secret
 
 ```
 kubectl get secret
-NAME                  TYPE                                  DATA   AGE
-default-token-nppdh   kubernetes.io/service-account-token   3      26h
+No resources found in default namespace.
 ```
 
 Secret `password-sample` is deleted!
@@ -737,8 +744,24 @@ func newSecretFromPassword(password *secretv1alpha1.Password, passwordStr string
 make run
 ```
 
+<details><summary>If error occurs</summary>
+
 ```
-kubectl apply -f config/samples
+internal/controller/password_controller.go:22:2: no required module provides package github.com/sethvargo/go-password/password; to add it:
+        go get github.com/sethvargo/go-password/password
+Error: not all generators ran successfully
+```
+
+Run the command to add it:
+
+```
+go get github.com/sethvargo/go-password/password
+```
+
+</details>
+
+```
+kubectl apply -k config/samples
 ```
 
 Check password
@@ -752,9 +775,9 @@ yh0<B-?qfOkolF#EKa>D5Ig924rZQxiU_dneAX86S1YsLR@TjvW}u\3mM7]NHGVz%
 Delete & create a new one
 
 ```
-kubectl delete -f config/samples
+kubectl delete -k config/samples
 password.secret.example.com "password-sample" deleted
-kubectl apply -f config/samples
+kubectl apply -k config/samples
 password.secret.example.com/password-sample created
 kubectl get secret password-sample -o jsonpath='{.data.password}' | base64 --decode
 noY$Xa9KI3At(J+bwvLdqi4hDB/CT~ZxGfpR[7elWrS5Ocz=VMym)u#2F1_60jN8%
@@ -815,7 +838,7 @@ type PasswordSpec struct {
 }
 ```
 
-Update `config/crd/bases/secret.example.com_passwords.yaml` and apply CRD:
+Run the following command to update `config/crd/bases/secret.example.com_passwords.yaml` and apply the CRD:
 
 ```
 make install
@@ -827,31 +850,43 @@ Apply `Password`:
 apiVersion: secret.example.com/v1alpha1
 kind: Password
 metadata:
+  labels:
+    app.kubernetes.io/name: password
+    app.kubernetes.io/instance: password-sample
+    app.kubernetes.io/part-of: password-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: password-operator
   name: password-sample
 spec:
-  length: 20
+  length: 20 # <- added
 ```
 
 ```
-kubectl apply -f config/samples/
+kubectl apply -k config/samples/
 ```
 
 <details>
 
 ```
-kubectl get -f config/samples/ -o yaml
+kubectl get -k config/samples/ -o yaml
 apiVersion: secret.example.com/v1alpha1
 kind: Password
 metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"secret.example.com/v1alpha1","kind":"Password","metadata":{"annotations":{},"name":"password-sample","namespace":"default"},"spec":{"length":20}}
-  creationTimestamp: "2022-05-02T00:20:46Z"
+      {"apiVersion":"secret.example.com/v1alpha1","kind":"Password","metadata":{"annotations":{},"labels":{"app.kubernetes.io/created-by":"password-operator","app.kubernetes.io/instance":"password-sample","app.kubernetes.io/managed-by":"kustomize","app.kubernetes.io/name":"password","app.kubernetes.io/part-of":"password-operator"},"name":"password-sample","namespace":"default"},"spec":{"length":20}}
+  creationTimestamp: "2023-07-27T22:39:03Z"
   generation: 2
+  labels:
+    app.kubernetes.io/created-by: password-operator
+    app.kubernetes.io/instance: password-sample
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: password
+    app.kubernetes.io/part-of: password-operator
   name: password-sample
   namespace: default
-  resourceVersion: "61061"
-  uid: 28eab3e8-bc1a-4a36-9fa9-26684bb40892
+  resourceVersion: "7454"
+  uid: 6cc59d4e-4e42-430c-bbd6-49a19e4b1fe5
 spec:
   caseSensitive: false
   digit: 10
@@ -890,7 +925,7 @@ make run
 
 Recreate the custom resource `Password`.
 ```
-kubectl delete -f config/samples/ && kubectl apply -f config/samples/
+kubectl delete -k config/samples/ && kubectl apply -k config/samples/
 ```
 
 Check the length of the password of the generated Secret:
@@ -905,7 +940,7 @@ kubectl get secret password-sample -o jsonpath='{.data.password}' | base64 --dec
 Change the length to 30 in `config/samples/secret_v1alpha1_password.yaml` and recreate the custom resource `Password`:
 
 ```
-kubectl delete -f config/samples/ && kubectl apply -f config/samples/
+kubectl delete -k config/samples/ && kubectl apply -k config/samples/
 ```
 
 ```
@@ -918,13 +953,13 @@ kubectl get secret password-sample -o jsonpath='{.data.password}' | base64 --dec
 Change the length to 10 and recreate the custom resource `Password`:
 
 ```
-kubectl delete -f config/samples/ && kubectl apply -f config/samples/
+kubectl delete -k config/samples/ && kubectl apply -k config/samples/
 ```
 
 You'll see the following `Error` log: `number of digits and symbols must be less than total length`
 
 ```
-1.651452110121384e+09   ERROR   controller.password     Create Secret object if not exists - failed to generate password {"reconciler group": "secret.example.com", "reconciler kind": "Password", "name": "password-sample", "namespace": "default", "error": "number of digits and symbols must be less than total length"}
+2023-07-28T07:44:53+09:00       ERROR   Create Secret object if not exists - failed to generate password        {"controller": "password", "controllerGroup": "secret.example.com", "controllerKind": "Password", "Password": {"name":"password-sample","namespace":"default"}, "namespace": "default", "name": "password-sample", "reconcileID": "4ffaf83a-ab95-4598-bfd5-a60e897cf5c8", "error": "number of digits and symbols must be less than total length"}
 ```
 
 The reconcilation loop failed to generate password. `Secret` was not successfully generated.
@@ -1000,13 +1035,19 @@ make install run
 apiVersion: secret.example.com/v1alpha1
 kind: Password
 metadata:
+  labels:
+    app.kubernetes.io/name: password
+    app.kubernetes.io/instance: password-sample
+    app.kubernetes.io/part-of: password-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: password-operator
   name: password-sample
 spec:
   length: 20
 ```
 
 ```
-kubectl delete -f config/samples/ && kubectl apply -f config/samples/
+kubectl delete -k config/samples/ && kubectl apply -k config/samples/
 ```
 
 ```
@@ -1040,7 +1081,7 @@ spec:
 ```
 
 ```
-kubectl delete -f config/samples/ && kubectl apply -f config/samples/
+kubectl delete -k config/samples/ && kubectl apply -k config/samples/
 ```
 
 ```
@@ -1111,8 +1152,10 @@ With this marker, controller-gen will update CRD by adding `additionalPrinterCol
 make install run
 ```
 
+Fix the `spec.length` to `20` and apply the password-sample:
+
 ```
-kubectl delete -f config/samples/ && kubectl apply -f config/samples/
+kubectl delete -k config/samples/ && kubectl apply -k config/samples/
 ```
 
 ```
@@ -1225,7 +1268,7 @@ To validate our custom resource object, we'll use **Validating Admission Webhook
 kubebuilder create webhook --group secret --version v1alpha1 --kind Password --programmatic-validation
 ```
 
-The command above automatically adds the following lines to `main.go`, which adds the webhook server to the manager.
+The command above automatically adds the following lines to `cmd/main.go`, which adds the webhook server to the manager.
 
 ```diff
 +       if err = (&secretv1alpha1.Password{}).SetupWebhookWithManager(mgr); err != nil {
@@ -1264,18 +1307,17 @@ Generated files:
 
         1. `config/webhook/kustomization.yaml`
         1. `config/webhook/kustomizeconfig.yaml`: reference service from webhook config
-        1. `config/webhook/manifests.yaml`: `MutatingWebhookConfiguration` and `ValidatingWebhookConfiguration`
         1. `config/webhook/service.yaml`: service for webhook
 
         </details>
 
-1. `main.go`: Register the webhook server to the manager.
+1. `cmd/main.go`: Register the webhook server to the manager.
 
-Let's start writing a validation logic in `api/v1alpha1/password_webhook.go`.
+Let's check what's inside `api/v1alpha1/password_webhook.go`, where we'll write the validation logic in the next section.
 
 There are already four functions:
-1. `SetupWebhookWithManager`: This is used in `main.go` to register the webhook.
-    `main.go`:
+1. `SetupWebhookWithManager`: This is used in `cmd/main.go` to register the webhook.
+    `cmd/main.go`:
     ```go
 	if err = (&secretv1alpha1.Password{}).SetupWebhookWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create webhook", "webhook", "Password")
@@ -1353,7 +1395,7 @@ Comment out `mutating`:
 <details><summary>config/webhook/kustomizeconfig.yaml</summary>
 
 ```yaml
-# the following config is for teaching kustomize where to look at when substituting vars.
+# the following config is for teaching kustomize where to look at when substituting nameReference.
 # It requires kustomize v2.1.0 or newer to work properly.
 nameReference:
 - kind: Service
@@ -1375,9 +1417,6 @@ namespace:
   group: admissionregistration.k8s.io
   path: webhooks/clientConfig/service/namespace
   create: true
-
-varReference:
-- path: metadata/annotations
 ```
 
 </details>
@@ -1386,20 +1425,35 @@ varReference:
 
 ```yaml
 # This patch add annotation to admission webhook config and
-# the variables $(CERTIFICATE_NAMESPACE) and $(CERTIFICATE_NAME) will be substituted by kustomize.
+# CERTIFICATE_NAMESPACE and CERTIFICATE_NAME will be substituted by kustomize
 # apiVersion: admissionregistration.k8s.io/v1
 # kind: MutatingWebhookConfiguration
 # metadata:
+#   labels:
+#     app.kubernetes.io/name: mutatingwebhookconfiguration
+#     app.kubernetes.io/instance: mutating-webhook-configuration
+#     app.kubernetes.io/component: webhook
+#     app.kubernetes.io/created-by: password-operator
+#     app.kubernetes.io/part-of: password-operator
+#     app.kubernetes.io/managed-by: kustomize
 #   name: mutating-webhook-configuration
 #   annotations:
-#     cert-manager.io/inject-ca-from: $(CERTIFICATE_NAMESPACE)/$(CERTIFICATE_NAME)
+#     cert-manager.io/inject-ca-from: CERTIFICATE_NAMESPACE/CERTIFICATE_NAME
 # ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
+  labels:
+    app.kubernetes.io/name: validatingwebhookconfiguration
+    app.kubernetes.io/instance: validating-webhook-configuration
+    app.kubernetes.io/component: webhook
+    app.kubernetes.io/created-by: password-operator
+    app.kubernetes.io/part-of: password-operator
+    app.kubernetes.io/managed-by: kustomize
   name: validating-webhook-configuration
   annotations:
-    cert-manager.io/inject-ca-from: $(CERTIFICATE_NAMESPACE)/$(CERTIFICATE_NAME)
+    cert-manager.io/inject-ca-from: CERTIFICATE_NAMESPACE/CERTIFICATE_NAME
+
 ```
 
 </details>
@@ -1407,6 +1461,23 @@ metadata:
 ```
 make install
 ```
+
+<details><summary>if error occurs</summary>
+
+If you encounter the following error:
+
+```
+error: unable to decode "STDIN": parsing time "null" as "2006-01-02T15:04:05Z07:00": cannot parse "null" as "2006"
+make: *** [install] Error 1
+```
+
+You can resolve it by specifying the version of controller-tools v0.12.0
+
+```
+CONTROLLER_TOOLS_VERSION=v0.12.0 make install
+```
+
+</details>
 
 ```
 IMG=password-operator:webhook
@@ -1427,6 +1498,12 @@ Apply invalid `Password`:
 apiVersion: secret.example.com/v1alpha1
 kind: Password
 metadata:
+  labels:
+    app.kubernetes.io/name: password
+    app.kubernetes.io/instance: password-sample
+    app.kubernetes.io/part-of: password-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: password-operator
   name: password-sample
 spec:
   length: 10
@@ -1466,6 +1543,115 @@ Commit: `git add . && git commit -am "[API] Implement validating admission webho
 1. Webhook
     1. `[kubebuilder]` Create validating admission webhook
     1. `[API]` Implement validating admission webhook
+
+
+## Errors
+
+### 1. `failed calling webhook "webhook.cert-manager.io": failed to call webhook`
+
+<details><summary>log details</summary>
+
+```
+cd config/manager && /Users/m.naka/repos/nakamasato/password-operator/bin/kustomize edit set image controller=password-operator:webhook
+/Users/m.naka/repos/nakamasato/password-operator/bin/kustomize build config/default | kubectl apply -f -
+# Warning: 'patchesStrategicMerge' is deprecated. Please use 'patches' instead. Run 'kustomize edit fix' to update your Kustomization automatically.
+# Warning: 'patchesStrategicMerge' is deprecated. Please use 'patches' instead. Run 'kustomize edit fix' to update your Kustomization automatically.
+namespace/password-operator-system created
+customresourcedefinition.apiextensions.k8s.io/passwords.secret.example.com configured
+serviceaccount/password-operator-controller-manager created
+role.rbac.authorization.k8s.io/password-operator-leader-election-role created
+clusterrole.rbac.authorization.k8s.io/password-operator-manager-role created
+clusterrole.rbac.authorization.k8s.io/password-operator-metrics-reader created
+clusterrole.rbac.authorization.k8s.io/password-operator-proxy-role created
+rolebinding.rbac.authorization.k8s.io/password-operator-leader-election-rolebinding created
+clusterrolebinding.rbac.authorization.k8s.io/password-operator-manager-rolebinding created
+clusterrolebinding.rbac.authorization.k8s.io/password-operator-proxy-rolebinding created
+service/password-operator-controller-manager-metrics-service created
+service/password-operator-webhook-service created
+deployment.apps/password-operator-controller-manager created
+validatingwebhookconfiguration.admissionregistration.k8s.io/password-operator-validating-webhook-configuration created
+Error from server (InternalError): error when creating "STDIN": Internal error occurred: failed calling webhook "webhook.cert-manager.io": failed to call webhook: Post "https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s": x509: certificate signed by unknown authority
+Error from server (InternalError): error when creating "STDIN": Internal error occurred: failed calling webhook "webhook.cert-manager.io": failed to call webhook: Post "https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s": x509: certificate signed by unknown authority
+make: *** [deploy] Error 1
+```
+
+</details>
+
+This might be caused by lack of Secret referenced by the password-operator.
+
+Ususally it's resolved by deploying again:
+
+```
+IMG=password-operator:webhook
+make docker-build IMG=$IMG
+kind load docker-image $IMG
+make deploy IMG=$IMG
+```
+
+<details><summary>detailed steps</summary>
+
+1. Confirm the status of the Pod:
+
+    ```
+    kubectl get pod -n password-operator-system
+    password-operator-system   password-operator-controller-manager-864b6659c6-br8sj   0/2     ContainerCreating   0          30m
+    ```
+
+1. If the Pod is stuck in `ContainerCreating`, you can check the cause by the following command:
+
+    ```
+    kubectl describe pod -n password-operator-system
+    ```
+
+    If the result contains the following message, the cause is related to the `Secret`.
+
+    ```
+    Events:
+      Type     Reason       Age                   From               Message
+      ----     ------       ----                  ----               -------
+      ...
+      Warning  FailedMount  3m53s (x21 over 30m)  kubelet            MountVolume.SetUp failed for volume "cert" : secret "webhook-server-cert" not found
+    ```
+
+    The secret `webhook-server-cert` is referenced by the `Deployment` `password-operator-controller-manager` in `password-operator-system` `Namespace` but the corresponding secret `webhook-server-cert` is not created. This is the cause of the failure of startup of the Pods.
+
+    For further investigation, this is supposed be created by `CertManager`
+
+1. Check if `Certificate` exists with the foollowing command
+
+    ```
+    kubectl get certificate -n password-operator-system
+    ```
+
+    This is supposed to be created in `make deploy IMG=$IMG`
+
+1. Check if `Certificate` is included in the applied yaml
+
+    ```
+    bin/kustomize build config/default | yq '. | select(.kind == "Certificate")'
+    ```
+
+1. Redeploy again as it might be a timing issue. Webhook might have failed before `Certificate` and its `Secret` are created.
+    ```
+    IMG=password-operator:webhook
+    make docker-build IMG=$IMG
+    kind load docker-image $IMG
+    make deploy IMG=$IMG
+    ```
+1. If it doesn't work, you can apply `Namespace` and `Certificate` first and then deploy.
+
+    ```
+    bin/kustomize build config/default | yq '. | select(.kind == "Certificate" or .kind == "Namespace")' | kubectl apply -f -
+    ```
+
+    ```
+    IMG=password-operator:webhook
+    make docker-build IMG=$IMG
+    kind load docker-image $IMG
+    make deploy IMG=$IMG
+    ```
+
+<details>
 
 ## References
 
