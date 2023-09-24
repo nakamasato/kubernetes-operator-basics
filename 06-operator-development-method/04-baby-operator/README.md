@@ -27,7 +27,7 @@ kubectl apply -f ../01-crd
     ```
 1. Start with [03-client-go-list-foo/main.go](../03-client-go-list-foo/main.go). (Code to list `Foo` objects)
     ```
-    cp <PATH TO 03-client-go-list-foo'S DIR>/main.go .
+    cp ../03-client-go-list-foo/main.go .
     ```
 
     ```
