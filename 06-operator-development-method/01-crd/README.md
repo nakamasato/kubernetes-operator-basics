@@ -10,8 +10,7 @@ Pod is a built-in resource.
 
 > A *custom resource* is an extension of the Kubernetes API that is not necessarily available in a default Kubernetes installation.
 
-You can define your own custom resource, and a *custom resource* is definied using the Kubernetes resource `CustomResourceDefinition` (ref: [Extend the Kubernetes API with CustomResourceDefinitions
-](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/)). 
+You can define your own custom resource, and a *custom resource* is definied using the Kubernetes resource `CustomResourceDefinition` (ref: [Extend the Kubernetes API with CustomResourceDefinitions](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/)).
 
 > custom resources let you store and retrieve structured data.
 
