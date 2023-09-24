@@ -19,9 +19,9 @@ You can check the tested versions in each example:
 
 - [ ] How to create a project with kubebuilder?
     - [ ] What's inside `api/<versions>/` directory?
-    - [ ] What's inside `controllers/` directory?
+    - [ ] What's inside `internal/controller` directory (`controllers` directory for project created with kubebuilder version 3.9 or earlier)?
     - [ ] What's inside `config/` directory?
-    - [ ] What's a `Manager` in `main.go`?
+    - [ ] What's a `Manager` in `cmd/main.go` (`main.go` for project created with kubebuilder version 3.9 or earlier) ?
 - [ ] How to add an API (e.g. `Password`)?
     - Resource
         - [ ] Where will the new type definition be stored?
