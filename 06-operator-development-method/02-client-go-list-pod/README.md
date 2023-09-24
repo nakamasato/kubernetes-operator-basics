@@ -9,7 +9,7 @@
     pods, _ := clientset.CoreV1().Pods("").List(context.Background(), metav1.ListOptions{})
     ```
 
-    [List function for Pods](https://github.com/kubernetes/client-go/blob/master/kubernetes/typed/core/v1/pod.go#L88-L102):
+    [List function for Pods](https://github.com/kubernetes/client-go/blob/34d1b64e67dbec9cbfa9628109bdd7c913897f49/kubernetes/typed/core/v1/pod.go#L88-L102):
     ```go
     func (c *pods) List(ctx context.Context, opts metav1.ListOptions) (result *v1.PodList, err error) {
         var timeout time.Duration
